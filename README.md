@@ -1,5 +1,7 @@
 # career-search · a Claude plugin
 
+![career-search: from CV to offer](docs/images/banner.png)
+
 A job search system for Claude: from your CV to tailored, ATS-safe CVs, vacancy analyses, company briefs, LinkedIn screening and a scored application pipeline.
 
 ## Install
@@ -12,6 +14,24 @@ A job search system for Claude: from your CV to tailored, ATS-safe CVs, vacancy 
 No "Add from a repository" option? Download `career-search.plugin` from the [latest release](../../releases) (or zip `plugins/career-search`) and choose **Upload plugin** instead.
 
 Updates arrive through the marketplace: your own files (narrative, CV base, rules) live in your folder and are never touched by an update.
+
+## What you get
+
+**A tailored, ATS-safe CV per vacancy.** You approve a short change list against your own CV base; Claude renders a clean two-page PDF and checks it (page count, section titles, contact details, banned phrases, keyword coverage). Sample with a fictional candidate:
+
+<img src="docs/images/sample-cv.png" alt="Sample CV rendered by the plugin" width="560">
+
+**A scored pipeline.** Every role gets a Fit and a Winnability score, a next step and a dossier with its own chat. Board, ranked table and stats views. Shown here with the built-in demo data (labels are in Dutch):
+
+![Pipeline overview](docs/images/pipeline-overview.png)
+
+![Pipeline board](docs/images/pipeline-board.png)
+
+![Pipeline stats](docs/images/pipeline-stats.png)
+
+**A setup dashboard.** Your onboarding as a to-do list, the requirements, recent updates, and questions about your story that you answer whenever it suits you. Claude folds the answers into your career narrative.
+
+![Setup dashboard](docs/images/setup-dashboard.png)
 
 ---
 
