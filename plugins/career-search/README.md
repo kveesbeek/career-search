@@ -20,7 +20,7 @@ flowchart LR
 | 3 | `vacancy-analysis` | Candid fit assessment, scores, how to apply, interview prep. Paste a posting to start. |
 | 3 | `company-brief` | One-page research brief, or prep for a call with a named person. |
 | 3 | `cv-tailoring` | Proposes a change list against your approved CV base (you never re-read a full CV), renders an ATS-safe two-page PDF, validates it in a Check file. |
-| 4 | `career-pipeline-tracker` | Keeps a scored kanban page of all roles and contacts up to date, in the same turn anything changes. The page itself ships with the plugin (no data, in the author's house style, labels in Dutch) and has its own chat per card. |
+| 4 | `career-pipeline-tracker` | Keeps a scored kanban page of all roles and contacts up to date, in the same turn anything changes. The page itself ships with the plugin (no data, in the author's house style, with an NL / EN switch) and has its own chat per card. |
 
 Your writing style is a separate, personal skill. If you don't have one, use `setup-writing-style` and put its name in your profile.
 

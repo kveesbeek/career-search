@@ -57,7 +57,8 @@ One document per network or recruiter contact. Doc id: a lowercase-hyphenated na
 
 The page ships with this skill as `assets/pipeline-board.html`: a kanban board with status cells, Fit / Winnability / Priority computed in the page, a next-actions list, per-card drawer with dossier, log and a chat that updates the card, a "new card" assistant that scores from `meta/scoring`, analytics, a contacts table and a demo mode with invented data. It holds no data and is styled in the plugin author's house style (Hanken Grotesk, blue accent, bright status colours).
 
-1. Copy the file and replace the placeholders: `{{FULL_NAME}}`, `{{FIRST_NAME}}`, `{{INITIAL}}` (favicon letter) and `{{CANDIDATE_CONTEXT}}` (one line in the page's language: current or last role, where they live, which roles they look for). The page's labels and assistant prompts are in Dutch; for another conversation language, translate the visible labels and the prompt texts, and nothing else.
+1. Copy the file and replace the placeholders: `{{FULL_NAME}}`, `{{FIRST_NAME}}`, `{{INITIAL}}` (favicon letter) and `{{CANDIDATE_CONTEXT}}` (one line: current or last role, where they live, which roles they look for).
+   The page has an **NL / EN switch** in the header; each viewer's choice is remembered in their browser. Set the default to the candidate's conversation language by changing `var DEFAULT_LANG = "nl";` to `"en"` when needed. In English mode the in-page Claude also writes field texts in English. For a third language, add a dictionary next to the English one (`EN` in the last script block) and a button, rather than editing the Dutch texts.
 2. Publish it as a new artifact titled with `tools.pipeline_title`, and declare the capabilities `db` and `sample` (the database and the in-page Claude calls).
 3. Write `meta/board` (title, subtitle, lastCompiled) and `meta/scoring` (the scoring model text).
 4. Put the artifact URL in `tools.pipeline_artifact` in profile.yaml.
