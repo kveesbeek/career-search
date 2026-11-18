@@ -1,0 +1,15 @@
+{
+  "name": "career-search",
+  "version": "0.4.0",
+  "description": "A job search system for senior candidates: set up your career sources once, screen LinkedIn alerts, analyse vacancies, research companies, tailor an ATS-safe CV per vacancy and keep a scored pipeline up to date.",
+  "author": {
+    "name": "Ken Van Eesbeek"
+  },
+  "keywords": [
+    "job search",
+    "cv",
+    "career",
+    "linkedin",
+    "pipeline"
+  ]
+}

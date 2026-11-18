@@ -1,0 +1,68 @@
+# Candidate profile for the career-search plugin.
+# Every skill and the CV renderer read this file. Personal settings live here,
+# never in a skill. Edit freely; keep the keys.
+
+candidate:
+  name: ""                       # must match HDR-01 in cv_base.md
+  target_level: ""               # e.g. "Head of Product", "senior HR business partner"
+  previous_employer: ""          # most recent employer, for comparisons in research briefs
+  comparison_frame: ""           # what research briefs should compare against or flag (optional)
+
+languages:
+  conversation: en               # language for chat, briefs, pipeline entries and screening notes
+  notes_language: en             # language of the CV Check file (en or nl)
+  cv_bases:                      # base file per CV language
+    en: cv_base.md
+
+writing_style_skill: my-writing-style   # the candidate's own writing-style skill, if any
+
+files:
+  narrative: career_narrative.md
+  scoring_model: scoring_model.md
+
+folder:
+  name: ""                       # e.g. "Career Search"
+  device_path: ""                # path on the candidate's computer, for the device bridge
+  drive_path: ""                 # path in Google Drive, for the Drive connector (optional)
+
+tools:
+  linkedin_browser: claude-in-chrome   # claude-in-chrome (your own Chrome) or built-in-browser
+  pipeline_artifact: ""                # URL of the pipeline page, filled in by career-setup
+  pipeline_title: Application pipeline
+  file_links: none                     # google-drive to link briefs from the pipeline, or none
+
+pipeline_notes: ""               # optional: how the candidate wants the pipeline written or shown
+
+cv:
+  # Terms only insiders of the candidate's domain understand. With
+  # `insider_reader: false` in a CV config, the Check fails when one of them
+  # appears in the headline or profile.
+  insider_terms:
+    terms: []
+    check_label: ""              # short name for the Check line, e.g. "MiFID"
+    reader_label: outside reader
+  # Regex patterns that may never appear in a CV (case-insensitive). Leave
+  # empty to use the plugin's default list of overused CV phrases.
+  banned_patterns: []
+  # Look of the CV. Leave out to keep the plugin default (Inter, dark green).
+  # Fill it from a design system with cv-tailoring/scripts/import_design_tokens.py.
+  # design:
+  #   font_family: Inter
+  #   font_fallback: sans-serif
+  #   font_files: []            # - {file: fonts/MyFont-400.woff2, weight: 400} (relative to "01 System")
+  #   ink: '#0F172A'
+  #   body: '#334155'
+  #   muted: '#64748B'
+  #   rule: '#E2E8F0'
+  #   accent: '#2E5A4C'
+  #   accent_wash: '#EDF3F0'
+  #   accent_wash_rule: '#C6D8D0'
+  #   name_weight: 700
+  #   name_tracking: -.8px
+  #   label_case: uppercase     # or none (sentence case)
+  #   label_color: var(--ink)   # or var(--accent)
+  #   label_weight: 700
+  #   label_size: '.87'
+  #   label_tracking: .03em
+  #   label_rule: false         # short accent bar before each section label
+  #   tag_radius: 999px

@@ -1,0 +1,63 @@
+# career-search
+
+A job search system for Claude, in four phases. The skills hold the method. Everything personal (your facts, your CV wording, your rules, your criteria) lives in your own folder, so the same plugin works for anyone and keeps improving without losing your setup.
+
+```mermaid
+flowchart LR
+    S["1 · Setup<br/>narrative, CV base,<br/>rules, criteria"] --> L["2 · Screening<br/>LinkedIn alerts<br/>→ ranking"]
+    L --> A["3 · Analysis<br/>fit, brief, call prep,<br/>tailored CV"]
+    A --> P["4 · Pipeline<br/>status, scores,<br/>contacts"]
+    P -- "feedback after a rejection<br/>or interview" --> S
+    A -- "new confirmed fact<br/>or approved wording" --> S
+```
+
+## Skills
+
+| Phase | Skill | What it does |
+|---|---|---|
+| 1 | `career-setup` | Builds your sources from your CV, LinkedIn export and an interview. Re-run it to add a role type, CV language or criteria. |
+| 2 | `linkedin-job-screening` | Walks all your LinkedIn job alerts, scores new vacancies against your criteria, appends a dated section to your ranking file. Runs as a scheduled task. |
+| 3 | `vacancy-analysis` | Candid fit assessment, scores, how to apply, interview prep. Paste a posting to start. |
+| 3 | `company-brief` | One-page research brief, or prep for a call with a named person. |
+| 3 | `cv-tailoring` | Proposes a change list against your approved CV base (you never re-read a full CV), renders an ATS-safe two-page PDF, validates it in a Check file. |
+| 4 | `career-pipeline-tracker` | Keeps a scored kanban page of all roles and contacts up to date, in the same turn anything changes. The page itself ships with the plugin (no data, in the author's house style, labels in Dutch) and has its own chat per card. |
+
+Your writing style is a separate, personal skill. If you don't have one, use `setup-writing-style` and put its name in your profile.
+
+## Your folder
+
+| Folder | Contents |
+|---|---|
+| `00 Sources/` | `profile.yaml` (settings), career narrative (facts), `cv_base.md` (approved CV lines with IDs), `standing_rules.md` (what you may and may not claim, wording per reader), `search_criteria.md`, scoring model. |
+| `01 System/` | Optional: brand fonts (`fonts/`) for the CV design, or your own CV template for structural changes. |
+| `02 Screening/` | LinkedIn ranking, last four weeks, plus a monthly archive. |
+| `03 Companies/<Company>/` | Everything for one active process. |
+| `Sent/` | Exactly what was sent. Never edited. |
+| `99 Archive/` | Closed processes and old versions. |
+
+## Where to change what
+
+| You want to ... | Edit |
+|---|---|
+| Add or correct a fact | the career narrative |
+| Approve a CV wording permanently | `cv_base.md` |
+| Add a "never claim X" rule | `standing_rules.md` |
+| Widen or narrow the search | `search_criteria.md` and the LinkedIn alerts |
+| Change how roles are scored | the scoring model |
+| Align the CV with your house style | `cv.design` in `profile.yaml` (import it from your design system's tokens; fonts in `01 System/fonts/`) |
+| Change how a phase works | the skill, so everyone gets the improvement |
+
+## Requirements
+
+- Claude with skills, artifacts and scheduled tasks.
+- The Claude desktop app with your career folder connected (or Google Drive via the connector, with some limits).
+- For screening and LinkedIn links: Claude in Chrome (recommended: your own Chrome, where you are already signed in) or the built-in browser of the desktop app, signed in to LinkedIn. `career-setup` checks this first, and the skills stop with a clear message when the extension is missing, Chrome is closed or you are signed out.
+- CV rendering runs in Claude's cloud workspace (Python, Playwright); nothing to install on your computer.
+
+## Getting started
+
+Upload your CV and say "set up my career search". The quick start takes about a quarter of an hour: Claude drafts your career narrative and a CV base from the CV, renders a first CV, creates your pipeline page and analyses a first vacancy with you.
+
+Everything after that is deepening, one step at a time: CV variants, what you may and may not claim, search criteria, scoring, daily screening, your house style. The **Opzet** tab of your pipeline page shows the full list with what is done, what is open and the sentence to give Claude for each step.
+
+The same tab holds **questions about your story**: whenever Claude sees a gap (a result without a number, a team size, a reason for a move), it adds a question there. Answer when it suits you, also from your phone; at your next task Claude puts the answers into your narrative. That is how the narrative grows without long interviews.

@@ -1,0 +1,16 @@
+# Generic CV, variant A
+# Render (from the career folder): python3 <plugin>/skills/cv-tailoring/scripts/render_cv.py "00 Sources/cv_config - Base.yaml"
+base: cv_base.md
+output_dir: Generic CV   # generic CVs land in "00 Sources/Generic CV"
+label:                   # empty = "<Name> - CV"; otherwise e.g. "Acme (Head of Product)"
+layout: compact          # compact (2 pages) | comfortable (3 pages, only on request)
+variant: A
+ai_option: 2             # 1 = one line under Education · 2 = featured block
+insider_reader: true     # false = insider terms from profile.yaml may not appear in headline/profile
+highlight_tags: 4        # first N tags in accent colour
+tags: []                 # empty = all TAG lines in base order; max 8 works best
+omit: {}                 # ID: "reason"
+override: {}             # ID: {text: "new text", why: "reason"}
+insert_after: []         # - {after: R1-02, id: X-01, text: "...", why: "..."}
+order: []                # preferred ID order within a role
+keywords: []             # posting keywords, for the coverage check

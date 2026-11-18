@@ -1,0 +1,2808 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Sollicitatiepijplijn</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap">
+<style>
+  :root{
+    /* Huisstijl: design system versie 7 (tokens.json).
+       De variabelenamen blijven ongewijzigd, zodat de rest van de pagina blijft werken. */
+    --paper:#f5f8fe; --surface:#ffffff; --surface-2:#eaeff8;
+    --ink:#131a2c; --ink-soft:#262b36; --ink-faint:#5e6573;
+    --line:#dde3ec; --line-strong:#dde3ec;
+    --accent:#1b4cd8; --accent-soft:#e3eafa; --accent-ink:#1b4cd8;
+    --accent-fill:#1b4cd8; --accent-hover:#153db0; --on-accent:#ffffff;
+    --navy:#0b1222; --navy-ink:#f2f5fa;
+
+    /* Statuscellen: de zes status-tinten van het design system. Eén heldere set
+       met navytekst op elke ondergrond, licht of donker, dus beide thema's
+       dezelfde waarden (StatusCell, 6px hoeken, gewicht 600). */
+    --interview:#34d399; --applied:#7aa2ff; --explore:#a78bfa;
+    --rejected:#ff8f7d; --noreply:#e8b85a; --ruledout:#a3acbd; --on-status:#0b1222;
+    /* Voorstel afgewezen: een aanbod gekregen en zelf nee gezegd. Dat is
+       dezelfde familie als in gesprek, status-done: de tegenpartij zei ja. */
+    --declined:#34d399;
+
+    /* Dezelfde fases als tekstkleur: cijfers en labels hebben contrast nodig,
+       dus daar staan de donkere tekstvarianten uit het systeem. */
+    --t-interview:#0c7f5c; --t-applied:#1b4cd8; --t-explore:#6a4bd1;
+    --t-rejected:#c0402b; --t-noreply:#8a5a00; --t-ruledout:#5e6573; --t-declined:#0c7f5c;
+
+    /* Grafiekvlakken en -stippen: het chartpalet, niet de statusvullingen. */
+    --chart-1:#1b4cd8; --chart-3:#b7791f; --chart-5:#7c8599;
+    --chart-slate:#7c8599; --chart-red:#c0402b; --chart-amber:#b7791f;
+    --mark-interview:#14a37f; --mark-applied:#1b4cd8; --mark-explore:#6a4bd1; --mark-declined:#14a37f;
+    --positive:#0c7f5c; --negative:#c0402b; --warning:#8a5a00;
+
+    --score-ink:#1b4cd8; --score-track:#eaeff8; --pip-off:#dde3ec; --row-hover:#f5f8fe;
+    --seq0:#e3eafa; --seq1:#c3d2f5; --seq2:#96b0ec; --seq3:#5f85e2; --seq4:#2f5fe6; --seq5:#1b4cd8;
+
+    /* Radii uit het systeem: sm 6 (statuscellen), md 10, lg 14 (kaarten), xl 20. */
+    --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:20px; --r-pill:999px;
+    --shadow:none;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0b1222; --surface:#131c30; --surface-2:#18233a;
+      --ink:#f2f5fa; --ink-soft:#d5dae3; --ink-faint:#a3acbd;
+      --line:#26324d; --line-strong:#26324d;
+      --accent:#7aa2ff; --accent-soft:#16244d; --accent-ink:#7aa2ff;
+      --accent-fill:#2f5fe6; --accent-hover:#4a75f0;
+      --t-interview:#34d399; --t-applied:#7aa2ff; --t-explore:#a78bfa;
+      --t-rejected:#ff8f7d; --t-noreply:#e8b85a; --t-ruledout:#a3acbd; --t-declined:#34d399;
+      --chart-1:#4d78ee; --chart-3:#e0a33d; --chart-5:#8b94a8;
+      --chart-slate:#8b94a8; --chart-red:#ff8f7d; --chart-amber:#e0a33d;
+      --mark-interview:#34d399; --mark-applied:#4d78ee; --mark-explore:#a78bfa; --mark-declined:#34d399;
+      --positive:#34d399; --negative:#ff8f7d; --warning:#e8b85a;
+      --score-ink:#7aa2ff; --score-track:#18233a; --pip-off:#26324d; --row-hover:#18233a;
+      --seq0:#16244d; --seq1:#1e3570; --seq2:#2a4a9e; --seq3:#3a64cb; --seq4:#5f85e2; --seq5:#7aa2ff;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0b1222; --surface:#131c30; --surface-2:#18233a;
+    --ink:#f2f5fa; --ink-soft:#d5dae3; --ink-faint:#a3acbd;
+    --line:#26324d; --line-strong:#26324d;
+    --accent:#7aa2ff; --accent-soft:#16244d; --accent-ink:#7aa2ff;
+    --accent-fill:#2f5fe6; --accent-hover:#4a75f0;
+    --t-interview:#34d399; --t-applied:#7aa2ff; --t-explore:#a78bfa;
+    --t-rejected:#ff8f7d; --t-noreply:#e8b85a; --t-ruledout:#a3acbd; --t-declined:#34d399;
+    --chart-1:#4d78ee; --chart-3:#e0a33d; --chart-5:#8b94a8;
+    --chart-slate:#8b94a8; --chart-red:#ff8f7d; --chart-amber:#e0a33d;
+    --mark-interview:#34d399; --mark-applied:#4d78ee; --mark-explore:#a78bfa; --mark-declined:#34d399;
+    --positive:#34d399; --negative:#ff8f7d; --warning:#e8b85a;
+    --score-ink:#7aa2ff; --score-track:#18233a; --pip-off:#26324d; --row-hover:#18233a;
+    --seq0:#16244d; --seq1:#1e3570; --seq2:#2a4a9e; --seq3:#3a64cb; --seq4:#5f85e2; --seq5:#7aa2ff;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding-inline:20px; padding-block:32px 64px; font-size:16px; line-height:1.6;
+  }
+  .wrap{max-width:1180px; margin-inline:auto; display:flex; flex-direction:column; gap:36px;}
+
+  h1,h2,h3{text-wrap:balance; margin:0;}
+  .eyebrow{
+    display:flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:600; color:var(--accent);
+  }
+  .eyebrow::before{content:''; width:18px; height:2px; border-radius:2px; background:var(--accent); flex:0 0 auto;}
+
+  header.top{display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:12px 20px;}
+  .head-text{display:flex; flex-direction:column; gap:6px; min-width:0; flex:1 1 320px;}
+  /* display-l: koppen van 40px en groter staan in gewicht 300, kleinere koppen
+     blijven zwaar. Onder 640px valt de titel terug op display-m (28px, 800). */
+  header.top h1{font-size:44px; font-weight:300; letter-spacing:-0.008em; line-height:1.12; color:var(--ink);}
+  @media (max-width:640px){ header.top h1{font-size:28px; font-weight:800; letter-spacing:-0.03em; line-height:1.25;} }
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px 18px; font-size:12.5px; color:var(--ink-faint); margin-top:4px;}
+  .meta-row span{white-space:nowrap;}
+
+  .anon-toggle{
+    appearance:none; cursor:pointer; flex:0 0 auto;
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:11.5px;
+    padding:8px 13px; border-radius:var(--r-md);
+    background:var(--surface); color:var(--ink-soft); border:1px solid var(--line-strong);
+  }
+  .anon-toggle:hover{color:var(--ink); border-color:var(--ink-faint);}
+  .anon-toggle:focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
+  .anon-toggle .dot{width:8px; height:8px; border-radius:50%; background:var(--ink-faint); flex:0 0 auto;}
+  .anon-toggle[aria-pressed="true"]{background:var(--accent-fill); color:var(--on-accent); border-color:var(--accent-fill);}
+  .anon-toggle[aria-pressed="true"] .dot{background:var(--on-accent);}
+
+  .anon-banner{
+    display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline;
+    background:var(--surface-2); border:1px solid var(--line-strong); border-left:4px solid var(--ink-faint);
+    border-radius:10px; padding:12px 16px; font-size:13px; color:var(--ink-soft);
+  }
+  .anon-banner b{color:var(--ink); font-weight:600;}
+
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(146px,1fr)); gap:12px;}
+  @media (max-width:640px){ .stats{grid-template-columns:repeat(2,1fr);} }
+  .stat{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:14px 16px; display:flex; flex-direction:column; gap:4px; box-shadow:var(--shadow);
+  }
+  .stat .n{font-variant-numeric:tabular-nums; font-size:30px; font-weight:700; letter-spacing:-0.02em; line-height:34px;}
+  .stat .lbl{font-size:12px; color:var(--ink-soft);}
+  .stat.hot .n{color:var(--t-interview);}
+  .stat.accent .n{color:var(--t-applied);}
+  .stat.explore .n{color:var(--t-explore);}
+  .stat.closed .n{color:var(--t-rejected);}
+  .stat.ruled .n{color:var(--t-ruledout);}
+  .stat.silent .n{color:var(--t-noreply);}
+  .stat.declined .n{color:var(--t-declined);}
+
+  .next{
+    background:var(--surface-2); border:1px solid var(--line-strong); border-radius:var(--r-lg);
+    padding:16px 20px; display:flex; flex-direction:column; gap:8px;
+  }
+  .next .eyebrow{color:var(--ink-soft);}
+  .next ol{margin:0; padding-left:20px; display:flex; flex-direction:column; gap:5px;}
+  .next li{font-size:14px;}
+  .next li b{font-weight:600;}
+  .next .when{font-size:11.5px; color:var(--ink-soft); background:var(--surface); border:1px solid var(--line); border-radius:5px; padding:1px 6px; white-space:nowrap;}
+  .next .when.today{background:var(--applied); color:var(--on-status); border-color:transparent; font-weight:600;}
+  .next .when.overdue{background:var(--rejected); color:var(--on-status); border-color:transparent; font-weight:600;}
+  .next .when-note{font-size:12.5px; color:var(--ink-faint);}
+  .next .undated{font-size:12.5px; color:var(--ink-soft);}
+  .next .na-more{list-style:none; margin-left:-20px;}
+
+  /* ---- pijplijnsectie ---- */
+  section.pipeline{display:flex; flex-direction:column; gap:14px;}
+  .sect-head{display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between; gap:12px 20px;}
+  .sect-head h2{font-size:22px; font-weight:700; letter-spacing:-0.014em; color:var(--ink);}
+  .sect-head .intro{color:var(--ink-soft); font-size:13.5px; max-width:74ch; margin-top:4px;}
+  .sect-head > div:first-child{min-width:0; flex:1 1 340px;}
+
+  .view-switch{display:inline-flex; flex:0 0 auto; border:1px solid var(--line-strong); border-radius:var(--r-md); overflow:hidden; background:var(--surface);}
+  .view-switch button{
+    appearance:none; border:0; cursor:pointer; background:none; color:var(--ink-soft);
+    font-size:11.5px;
+    padding:8px 15px;
+  }
+  .view-switch button + button{border-left:1px solid var(--line);}
+  .view-switch button:hover{color:var(--ink);}
+  .view-switch button[aria-pressed="true"]{background:var(--accent-fill); color:var(--on-accent); font-weight:600;}
+  .view-switch button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+
+  .legend{
+    display:flex; flex-wrap:wrap; gap:8px 22px; align-items:center;
+    font-size:12.5px; color:var(--ink-soft);
+    padding:10px 14px; background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  }
+  .legend b{font-weight:600; color:var(--score-ink); letter-spacing:.02em;}
+  .legend .sep{color:var(--ink-faint);}
+
+  .filters{display:flex; flex-wrap:wrap; gap:6px;}
+  .filters button{
+    appearance:none; cursor:pointer; background:var(--surface); color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:6px; padding:5px 11px;
+    font-size:13px; font-weight:500;
+  }
+  .filters button:hover{color:var(--ink);}
+  .filters button[aria-pressed="true"]{background:var(--accent-fill); color:var(--on-accent); border-color:var(--accent-fill); font-weight:600;}
+  .filters button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .filters .cnt{opacity:.6; margin-left:5px;}
+
+  /* ---- tabel ---- */
+  .rank-table{border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); box-shadow:var(--shadow); overflow:hidden;}
+  .rank-head, .rank-row{
+    display:grid; grid-template-columns:26px minmax(0,1fr) 124px 120px 56px 46px 46px 50px 16px;
+    align-items:center; gap:12px; padding:8px 14px; text-align:left;
+  }
+  .rank-head{background:var(--surface-2); border-bottom:1px solid var(--line);}
+  .rank-item{border-bottom:1px solid var(--line);}
+  .rank-item:last-child{border-bottom:none;}
+  .rank-item[data-stage="interview"]{--row-c:var(--interview);}
+  .rank-item[data-stage="applied"]{--row-c:var(--applied);}
+  .rank-item[data-stage="explore"]{--row-c:var(--explore);}
+  .rank-item[data-stage="rejected"]{--row-c:var(--rejected);}
+  .rank-item[data-stage="noreply"]{--row-c:var(--noreply);}
+  .rank-item[data-stage="ruledout"]{--row-c:var(--ruledout);}
+  .rank-item[data-stage="declined"]{--row-c:var(--declined);}
+
+  button.rank-row{
+    appearance:none; border:0; background:none; width:100%; cursor:pointer;
+    font:inherit; color:inherit;
+  }
+  button.rank-row:hover{background:var(--row-hover);}
+  button.rank-row:focus-visible{outline:2px solid var(--accent); outline-offset:-2px;}
+  .rank-item.open button.rank-row{background:var(--row-hover);}
+
+  @media (max-width:860px){
+    .rank-head, .rank-row{grid-template-columns:26px minmax(0,1fr) 124px 120px 46px 46px 50px 16px;}
+    .rank-bar{display:none;}
+  }
+  @media (max-width:640px){
+    .rank-head, .rank-row{grid-template-columns:22px minmax(0,1fr) 42px 42px 46px 16px; gap:8px; padding:8px 10px;}
+    .rank-bar, .stage-col, .pip-col{display:none;}
+  }
+
+  .rank-head .lbl{
+    font-size:10.5px; color:var(--ink-faint);
+  }
+  .sort-th{
+    appearance:none; background:none; border:0; padding:0; margin:0; cursor:pointer;
+    font-size:10.5px; color:var(--ink-faint); text-align:right;
+  }
+  .sort-th:hover{color:var(--ink);}
+  .sort-th[aria-pressed="true"]{color:var(--score-ink); font-weight:600;}
+  .sort-th:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px;}
+
+  .rank-row .pos{font-size:11.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums;}
+  .rank-row .who{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .who .co{font-size:13px; font-weight:600; color:var(--ink);}
+  .who .ro{font-size:12.5px; font-style:italic; color:var(--ink-faint); margin-left:7px;}
+  @media (max-width:640px){
+    .rank-row .who{white-space:normal; display:flex; flex-direction:column; gap:1px;}
+    .who .ro{margin-left:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  }
+
+  /* Statuscel uit het design system: 6px hoeken, gewicht 600, navytekst.
+     De langere fasenamen mogen binnen de cel afbreken in plaats van de
+     kolom uit te duwen. */
+  .stage-tag{
+    display:inline-flex; align-items:center; justify-content:center; text-align:center;
+    font-size:12px; font-weight:600; line-height:15px;
+    padding:4px 8px; border-radius:6px; white-space:normal;
+    background:var(--row-c, var(--ruledout)); color:var(--on-status);
+  }
+
+  .pip-col{display:flex; align-items:center; gap:9px; white-space:nowrap;}
+  .rank-bar{height:6px; border-radius:3px; background:var(--score-track); overflow:hidden;}
+  .rank-bar i{display:block; height:100%; background:var(--score-ink); border-radius:3px;}
+  .rank-head .rank-bar{background:none; height:auto; overflow:visible;}
+  .rank-row .val{font-size:12.5px; text-align:right; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
+  .rank-row .val.lead{font-weight:600; color:var(--score-ink);}
+  .rank-row .val.none{color:var(--ink-faint);}
+  .chev{font-size:10px; color:var(--ink-faint); text-align:center; line-height:1;}
+  .rank-item.open .chev{color:var(--ink); transform:rotate(90deg);}
+  .chev{display:inline-block; transition:transform .12s ease;}
+  @media (prefers-reduced-motion:reduce){ .chev{transition:none;} }
+
+  /* ---- uitgeklapt detail ---- */
+  .rank-detail{
+    padding:4px 18px 16px 18px; display:flex; flex-direction:column; gap:9px;
+    background:var(--row-hover);
+  }
+  .rank-detail .d-role{font-size:13px; color:var(--ink-soft);}
+  .rank-detail .d-text{font-size:13px; color:var(--ink-soft); max-width:88ch;}
+  .rank-detail .d-next{font-size:13px; color:var(--ink); max-width:88ch;}
+  .rank-detail .d-next b{font-weight:600;}
+  .rank-detail .d-stamp{font-size:11px; color:var(--ink-faint);}
+  .rank-detail .d-links{display:flex; flex-wrap:wrap; gap:6px 16px;}
+  .rank-detail .d-links a{font-size:12px; color:var(--accent-ink); text-decoration:none; border-bottom:1px dashed var(--line-strong); padding-bottom:1px;}
+  .rank-detail .d-links a:hover{border-bottom-style:solid;}
+  .rank-detail .d-pips{display:flex; flex-wrap:wrap; gap:6px 16px; padding-top:2px;}
+
+  /* ---- stats ---- */
+  .an-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start;}
+  @media (max-width:900px){ .an-grid{grid-template-columns:1fr;} }
+  .an-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+    padding:16px 18px 18px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px;
+  }
+  .an-card.wide{grid-column:1 / -1;}
+  .an-card h3{font-size:15px; font-weight:600;}
+  .an-card .sub{font-size:12.5px; color:var(--ink-faint); margin-top:-8px;}
+  .an-note{font-size:12.5px; color:var(--ink-soft); border-top:1px dashed var(--line); padding-top:10px;}
+  .an-note b{font-weight:600; color:var(--ink);}
+
+  .bars{display:flex; flex-direction:column; gap:9px;}
+  .bar-row{display:grid; grid-template-columns:132px minmax(0,1fr) 68px; align-items:center; gap:10px;}
+  .bar-lbl{font-size:12.5px; color:var(--ink-soft);}
+  .bar-track{height:20px; background:var(--score-track); border-radius:4px; overflow:hidden;}
+  /* display:block is nodig: een <i> is inline, en dan negeert de browser
+     height en width, waardoor enkel de lege baan zichtbaar bleef. */
+  .bar-fill{display:block; height:100%; border-radius:0 4px 4px 0; min-width:3px;}
+  .bar-val{font-size:12.5px; color:var(--ink); text-align:right; font-variant-numeric:tabular-nums;}
+  .bar-val span{color:var(--ink-faint); margin-left:5px;}
+
+  .hero{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap;}
+  .hero .n{font-size:40px; font-weight:700; letter-spacing:-0.02em; line-height:1; color:var(--score-ink); font-variant-numeric:tabular-nums;}
+  .hero .of{font-size:13px; color:var(--ink-soft);}
+  .split{display:flex; height:20px; border-radius:4px; overflow:hidden; gap:2px; background:var(--surface);}
+  .split i{display:block;}
+  .an-legend{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12px; color:var(--ink-soft);}
+  .an-legend span{display:inline-flex; align-items:center; gap:6px;}
+  .an-legend i{width:9px; height:9px; border-radius:2px; display:block; flex:0 0 auto;}
+  .an-legend .mk{display:block; flex:0 0 auto; overflow:visible;}
+  .an-legend b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums;}
+  .kv{display:flex; flex-wrap:wrap; gap:4px 22px; font-size:12.5px; color:var(--ink-soft);}
+  .kv b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums;}
+
+  .stack{display:flex; height:20px; gap:2px; background:var(--surface);}
+  .stack i{display:flex; align-items:center; justify-content:center; font-size:10px; min-width:2px;}
+  .stack i:first-child{border-radius:4px 0 0 4px;}
+  .stack i:last-child{border-radius:0 4px 4px 0;}
+  .stack-row{display:grid; grid-template-columns:40px minmax(0,1fr); align-items:center; gap:10px;}
+  .stack-row em{font-style:normal; font-size:10.5px; color:var(--ink-faint);}
+
+  .sc-wrap svg{display:block; width:100%; height:auto; max-width:100%;}
+  .sc-dot{stroke:var(--surface); stroke-width:2;}
+  .sc-hit{fill:transparent; cursor:help;}
+
+  /* ---- bord ---- */
+  .columns{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; align-items:start;}
+  @media (max-width:900px){ .columns{grid-template-columns:1fr;} }
+  .col{display:flex; flex-direction:column; gap:10px;}
+  .col-head{display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:0 2px 8px; border-bottom:3px solid var(--col-c, var(--line-strong));}
+  .col-head h3{font-size:14.5px; font-weight:600; color:var(--ink);}
+  .col-head .count{font-size:12px; color:var(--ink-faint);}
+  .col[data-stage="hot"]{--col-c:var(--interview);}
+  .col[data-stage="applied"]{--col-c:var(--applied);}
+  .col[data-stage="explore"]{--col-c:var(--explore);}
+  .col[data-stage="closed"]{--col-c:var(--rejected);}
+  .empty-col{font-size:12.5px; color:var(--ink-faint); border:1px dashed var(--line-strong); border-radius:var(--r-lg); padding:12px 14px;}
+
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg);
+    padding:13px 14px; display:flex; flex-direction:column; gap:7px; box-shadow:var(--shadow);
+  }
+  .card-top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+  .card .name{font-weight:600; font-size:14.5px; color:var(--ink);}
+  .card .name a.name-link{color:inherit; text-decoration:none; border-bottom:1px dashed var(--line-strong); padding-bottom:1px;}
+  .card .name a.name-link:hover{border-bottom-style:solid; color:var(--accent-ink);}
+  .card .name .link-ico{font-size:11px; color:var(--ink-faint); margin-left:2px;}
+  .card .vac-link{font-size:11px; color:var(--accent-ink); text-decoration:none; border-bottom:1px dashed var(--line-strong); width:fit-content; padding-bottom:1px;}
+  .card .vac-link:hover{border-bottom-style:solid;}
+  .card .role{font-size:12.5px; color:var(--ink-soft);}
+  .card .detail{font-size:12.5px; color:var(--ink-soft); border-top:1px dashed var(--line); padding-top:7px; margin-top:1px;}
+  .card .next-step{font-size:12.5px; color:var(--ink);}
+  .card .next-step b{font-weight:600;}
+  .card .datestamp{font-size:11px; color:var(--ink-faint);}
+
+  .prio-tag{
+    display:flex; align-items:baseline; gap:4px;
+    font-size:11px; color:var(--ink-faint); white-space:nowrap;
+  }
+  .prio-tag b{font-size:14px; font-weight:600; color:var(--score-ink); font-variant-numeric:tabular-nums; letter-spacing:0;}
+
+  .score{border-top:1px dashed var(--line); padding-top:8px; margin-top:1px; display:flex; flex-direction:column; gap:7px;}
+  .score-nums{display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline;}
+  .sc{display:flex; align-items:baseline; gap:5px; font-size:10.5px; color:var(--ink-faint);}
+  .sc b{font-size:13px; font-weight:600; color:var(--ink); font-variant-numeric:tabular-nums; letter-spacing:0;}
+  .capped{font-size:10px; color:var(--ink-faint);}
+
+  .pill{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:13px; font-weight:600; line-height:20px; padding:3px 10px; border-radius:6px;
+    width:fit-content; color:var(--on-status);
+  }
+  .pill.hot{background:var(--interview);}
+  .pill.applied{background:var(--applied);}
+  .pill.explore{background:var(--explore);}
+  .pill.rejected{background:var(--rejected);}
+  .pill.noreply{background:var(--noreply);}
+  .pill.ruledout{background:var(--ruledout);}
+  .pill.declined{background:var(--declined);}
+
+  .pip-rows{display:flex; flex-wrap:wrap; gap:4px 12px;}
+  .pip-row{display:flex; align-items:center; gap:5px;}
+  .pip-row em{font-style:normal; font-size:10px; color:var(--ink-faint);}
+  .pips{display:inline-flex; gap:2px;}
+  .pips i{width:5px; height:5px; border-radius:1.5px; background:var(--pip-off); display:block;}
+  .pips i.on{background:var(--score-ink);}
+
+  section.contacts h2{font-size:22px; font-weight:700; letter-spacing:-0.014em; color:var(--ink); margin-bottom:4px;}
+  section.contacts .intro{color:var(--ink-soft); font-size:13.5px; margin-bottom:16px;}
+  .table-wrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface); box-shadow:var(--shadow);}
+  table{width:100%; border-collapse:collapse; font-size:13px; min-width:640px;}
+  thead th{
+    text-align:left; font-size:11px;
+    color:var(--ink-faint); font-weight:500; padding:10px 14px; border-bottom:1px solid var(--line);
+    position:sticky; top:0; background:var(--surface);
+  }
+  tbody td{padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody td.name{font-weight:600; white-space:nowrap;}
+  tbody td.org{color:var(--ink-soft);}
+  .contact-sort{
+    appearance:none; background:none; border:0; padding:0; margin:0; cursor:pointer;
+    font:inherit; letter-spacing:inherit; text-transform:inherit; color:var(--score-ink); font-weight:600;
+  }
+  .contact-sort:hover{color:var(--ink);}
+  .contact-sort:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:3px;}
+  /* Design system: pillen zijn alleen voor status. Een categorie is gewone tekst. */
+  .type-tag{display:inline-block; font-size:13px; font-weight:500; line-height:20px; white-space:nowrap; color:var(--ink-soft);}
+  .type-tag.executive_search{color:var(--accent-ink);}
+
+  /* status: ingeklapt twee regels, uitgeklapt op volle breedte onder de rij */
+  .st-btn{
+    appearance:none; background:none; border:0; padding:0; margin:0; cursor:pointer;
+    font:inherit; color:var(--ink-soft); text-align:left; max-width:420px;
+    display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden;
+  }
+  .st-btn:hover{color:var(--ink);}
+  .st-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px;}
+  .st-btn .chev{display:inline-block; font-size:10px; color:var(--ink-faint); margin-right:5px;}
+  tr.open .st-btn{-webkit-line-clamp:1; color:var(--ink-faint);}
+  tr.open .st-btn .chev{color:var(--ink); transform:rotate(90deg);}
+  tr.st-detail > td{background:var(--row-hover); padding:0 14px 14px 14px;}
+  .st-full{font-size:13px; color:var(--ink-soft); max-width:92ch;}
+  .st-full .lbl{
+    display:block; font-size:10px; color:var(--ink-faint); margin-bottom:3px;
+  }
+  .st-full .org-line{margin-top:9px; display:block;}
+  tbody td.date{color:var(--ink-faint); white-space:nowrap; font-variant-numeric:tabular-nums;}
+
+  .closed-contacts{margin-top:14px; border:1px solid var(--line); border-radius:var(--r-lg); background:var(--surface);}
+  .closed-contacts > summary{
+    cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px;
+    padding:11px 14px; font-size:11.5px; color:var(--ink-soft);
+  }
+  .closed-contacts > summary::-webkit-details-marker{display:none;}
+  .closed-contacts > summary:hover{color:var(--ink);}
+  .closed-contacts > summary:focus-visible{outline:2px solid var(--accent); outline-offset:-2px; border-radius:var(--r-lg);}
+  .closed-contacts > summary .chev{font-size:10px;}
+  .closed-contacts[open] > summary .chev{transform:rotate(90deg);}
+  .closed-contacts .cnt{color:var(--ink-faint);}
+  .closed-contacts .table-wrap{border:0; border-top:1px solid var(--line); border-radius:0 0 var(--r-lg) var(--r-lg); box-shadow:none;}
+  .closed-contacts tbody td{color:var(--ink-soft);}
+  .closed-contacts tbody td.name{color:var(--ink-soft);}
+
+  footer.foot{
+    display:flex; flex-direction:column; gap:8px; border-top:1px solid var(--line); padding-top:18px;
+    font-size:12.5px; color:var(--ink-faint);
+  }
+  footer.foot b{color:var(--ink-soft); font-weight:600;}
+
+  .skeleton{color:var(--ink-faint); font-size:13px; font-style:italic; padding:12px 14px;}
+  .db-warning{background:var(--surface-2); border:1px solid var(--negative); color:var(--negative); border-radius:10px; padding:10px 14px; font-size:12.5px;}
+
+  /* ---- dossier & chat ---- */
+  .head-actions{display:flex; flex-wrap:wrap; gap:8px; flex:0 0 auto;}
+  .btn{
+    appearance:none; cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+    font-size:11.5px;
+    padding:8px 13px; border-radius:var(--r-md); background:var(--surface); color:var(--ink-soft); border:1px solid var(--line-strong);
+  }
+  .btn:hover{color:var(--ink); border-color:var(--ink-faint);}
+  .btn:focus-visible{outline:2px solid var(--accent); outline-offset:3px;}
+  .btn.primary{background:var(--accent-fill); color:var(--on-accent); border-color:var(--accent-fill);}
+  .btn.primary:hover{background:var(--accent-hover); border-color:var(--accent-hover); color:var(--on-accent);}
+  .btn:disabled{opacity:.5; cursor:default;}
+  .btn.small{padding:5px 10px; font-size:10.5px;}
+  .open-dossier{
+    appearance:none; cursor:pointer; width:fit-content; display:inline-flex; align-items:center; gap:6px;
+    font-size:10.5px; font-weight:600;
+    padding:5px 10px; border-radius:6px; background:var(--accent-soft); color:var(--accent-ink); border:1px solid transparent;
+  }
+  .open-dossier:hover{border-color:var(--accent);}
+  .open-dossier:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  .next li .na-link{appearance:none; background:none; border:0; padding:0; font:inherit; font-weight:600; color:var(--ink); cursor:pointer; border-bottom:1px dashed var(--line-strong);}
+  .next li .na-link:hover{color:var(--accent-ink); border-bottom-style:solid;}
+
+  .drawer[hidden], .scrim[hidden], .btn[hidden]{display:none;}
+  .scrim{position:fixed; inset:0; background:rgba(10,18,32,.35); z-index:40;}
+  .drawer{
+    position:fixed; top:0; right:0; bottom:0; z-index:41; width:min(560px,100vw);
+    background:var(--paper); border-left:1px solid var(--line-strong); box-shadow:-12px 0 40px -20px rgba(0,0,0,.4);
+    display:flex; flex-direction:column;
+  }
+  .dr-head{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:16px 18px 12px; border-bottom:1px solid var(--line); background:var(--surface);}
+  .dr-head h2{font-size:20px; font-weight:600;}
+  .dr-head .sub{font-size:12.5px; color:var(--ink-soft); margin-top:2px;}
+  .dr-head .x{appearance:none; background:none; border:1px solid var(--line-strong); border-radius:var(--r-md); width:32px; height:32px; cursor:pointer; color:var(--ink-soft); font-size:16px; flex:0 0 auto;}
+  .dr-head .x:hover{color:var(--ink);}
+  .dr-tools{display:flex; flex-wrap:wrap; gap:6px; padding:10px 18px; border-bottom:1px solid var(--line); background:var(--surface);}
+  .dr-body{flex:1 1 auto; overflow-y:auto; padding:14px 18px 18px; display:flex; flex-direction:column; gap:14px;}
+  .dr-sec{display:flex; flex-direction:column; gap:6px;}
+  .dr-sec > .eyebrow{display:flex; justify-content:space-between; gap:8px;}
+  .dr-box{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:11px 13px; font-size:13px; color:var(--ink-soft);}
+  .dr-box b{color:var(--ink); font-weight:600;}
+  .dr-box p{margin:0 0 6px;} .dr-box p:last-child{margin:0;}
+  .dossier-text{white-space:pre-wrap; font-size:12.5px; line-height:1.55;}
+  .dr-sec details > summary{cursor:pointer; list-style:none;}
+  .dr-sec details > summary::-webkit-details-marker{display:none;}
+  .log-list{display:flex; flex-direction:column; gap:6px; margin:0; padding:0; list-style:none;}
+  .log-list li{font-size:12.5px; color:var(--ink-soft); display:grid; grid-template-columns:62px 1fr; gap:8px;}
+  .log-list .d{font-size:11px; color:var(--ink-faint); padding-top:1px;}
+  .chat{display:flex; flex-direction:column; gap:8px;}
+  .msg{font-size:13px; border-radius:10px; padding:9px 12px; max-width:92%; white-space:pre-wrap; line-height:1.5;}
+  .msg.me{align-self:flex-end; background:var(--ink); color:var(--paper);}
+  .msg.ai{align-self:flex-start; background:var(--surface); border:1px solid var(--line); color:var(--ink);}
+  .msg.sys{align-self:stretch; max-width:none; background:none; color:var(--ink-faint); font-size:12px; padding:0 2px;}
+  .changes{align-self:flex-start; font-size:12px; background:var(--accent-soft); color:var(--ink); border-radius:var(--r-md); padding:7px 10px; display:flex; flex-direction:column; gap:3px; max-width:92%;}
+  .changes .ttl{font-size:10px; color:var(--accent-ink);}
+  .changes button{align-self:flex-start; margin-top:3px;}
+  .composer{border-top:1px solid var(--line); background:var(--surface); padding:10px 14px 12px; display:flex; flex-direction:column; gap:8px;}
+  .composer textarea{
+    width:100%; min-height:62px; max-height:200px; resize:vertical; font:inherit; font-size:13.5px; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line-strong); border-radius:var(--r-md); padding:8px 10px;
+  }
+  .composer textarea:focus{outline:2px solid var(--accent); outline-offset:-1px;}
+  .composer .row{display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .composer .hint{font-size:11.5px; color:var(--ink-faint);}
+  .copy-box{width:100%; font:inherit; font-size:12px; padding:8px; border-radius:var(--r-md); border:1px solid var(--line-strong); background:var(--paper); color:var(--ink);}
+  .preview-grid{display:grid; grid-template-columns:110px 1fr; gap:4px 10px; font-size:12.5px;}
+  .preview-grid .k{font-size:10.5px; color:var(--ink-faint); padding-top:2px;}
+  .notice{font-size:12.5px; color:var(--rejected);}
+  .thinking{display:inline-flex; align-items:center; gap:8px; color:var(--ink-soft);}
+  .thinking .elapsed{font-size:11px; color:var(--ink-faint);}
+  .dots{display:inline-flex; gap:3px;}
+  .dots i{width:6px; height:6px; border-radius:50%; background:var(--accent); opacity:.35; animation:pulse 1.2s infinite ease-in-out;}
+  .dots i:nth-child(2){animation-delay:.2s;} .dots i:nth-child(3){animation-delay:.4s;}
+  @keyframes pulse{0%,80%,100%{opacity:.25; transform:scale(.85);} 40%{opacity:1; transform:scale(1);}}
+  @media (prefers-reduced-motion:reduce){ .dots i{animation:none; opacity:.7;} }
+  .job-tray{position:fixed; left:16px; bottom:16px; z-index:42; display:flex; flex-direction:column; align-items:flex-start; gap:6px; max-width:calc(100vw - 32px);}
+  .job{appearance:none; cursor:pointer; display:inline-flex; align-items:center; gap:8px; font:inherit; font-size:12.5px;
+    padding:7px 12px; border-radius:10px; background:var(--surface); color:var(--ink); border:1px solid var(--line-strong); box-shadow:var(--shadow);}
+  .job .elapsed{font-size:11px; color:var(--ink-faint);}
+  .job.ok{background:var(--interview); color:var(--on-status); border-color:transparent;}
+  .job.fail{background:var(--rejected); color:var(--on-status); border-color:transparent;}
+  .badge-busy{font-size:10px; color:var(--accent-ink); margin-left:6px;}
+  .steps{display:flex; flex-wrap:wrap; gap:6px;}
+  .steps span{font-size:10.5px; padding:4px 9px; border-radius:6px; border:1px solid var(--line); color:var(--ink-faint); background:var(--surface);}
+  .steps span.on{border-color:var(--accent); color:var(--accent-ink); background:var(--accent-soft); font-weight:600;}
+  .steps span.done{color:var(--ink-soft);}
+  .steps span.done::before{content:"✓ ";}
+  .msg.reasoning{max-width:none; align-self:stretch; font-size:12.5px;}
+  .log-list li.step > span:last-child{color:var(--ink-faint);}
+  .log-list .tag{font-size:9.5px; padding:1px 5px; border-radius:4px; background:var(--surface-2); border:1px solid var(--line); color:var(--ink-soft);}
+
+  @media (prefers-reduced-motion:no-preference){
+    .card, .stat{ transition: transform .15s ease, box-shadow .15s ease; }
+    .card:hover, .stat:hover{ transform: translateY(-1px); }
+  }
+
+  /* ---- Opzet: setup-dashboard ------------------------------------------ */
+  .page-switch{display:inline-flex; background:var(--surface-2); border:1px solid var(--line-strong); border-radius:var(--r-md); padding:3px; gap:2px;}
+  .page-switch button{appearance:none; cursor:pointer; border:0; background:transparent; color:var(--ink-soft); font:inherit; font-size:12px; font-weight:600; padding:6px 12px; border-radius:7px; display:inline-flex; align-items:center; gap:6px;}
+  .page-switch button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(19,26,44,.08);}
+  .page-switch .badge{background:var(--accent-fill); color:var(--on-accent); border-radius:999px; font-size:10.5px; line-height:16px; min-width:16px; padding:0 5px; text-align:center;}
+  .setup{display:flex; flex-direction:column; gap:28px;}
+  .setup h2{margin:0;}
+  .su-progress{display:flex; flex-direction:column; gap:8px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:16px 20px;}
+  .su-progress .top{display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap;}
+  .su-progress .big{font-size:30px; font-weight:700; letter-spacing:-0.02em; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .su-progress .of{font-size:13px; color:var(--ink-soft);}
+  .su-bar{height:8px; border-radius:999px; background:var(--surface-2); overflow:hidden;}
+  .su-bar i{display:block; height:100%; background:var(--accent-fill); border-radius:999px;}
+  .su-grid{display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:20px; align-items:start;}
+  @media (max-width:860px){ .su-grid{grid-template-columns:1fr;} }
+  .su-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:16px 20px; display:flex; flex-direction:column; gap:10px;}
+  .su-card h3{margin:0; font-size:15px; font-weight:700; color:var(--ink); letter-spacing:-0.01em;}
+  .su-card .sub{font-size:12.5px; color:var(--ink-faint); margin-top:-6px;}
+  .su-steps{list-style:none; margin:0; padding:0; display:flex; flex-direction:column;}
+  .su-step{display:grid; grid-template-columns:22px minmax(0,1fr) auto; gap:4px 10px; align-items:start; padding:9px 0; border-top:1px solid var(--line);}
+  .su-step:first-child{border-top:0;}
+  .su-ic{width:18px; height:18px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; margin-top:1px; border:2px solid var(--line-strong); color:transparent;}
+  .su-step.done .su-ic{background:var(--interview); border-color:var(--interview); color:var(--on-status);}
+  .su-step.active .su-ic{border-color:var(--applied); background:linear-gradient(90deg,var(--applied) 50%,transparent 50%);}
+  .su-step.optional .su-ic{border-style:dashed;}
+  .su-step .lbl{font-size:13.5px; font-weight:600; color:var(--ink);}
+  .su-step.done .lbl{color:var(--ink-soft); font-weight:500;}
+  .su-step .note{grid-column:2 / 4; font-size:12.5px; color:var(--ink-faint); margin-top:-2px;}
+  .su-phase{font-size:12px; font-weight:700; color:var(--accent-ink); margin:10px 0 2px; display:flex; justify-content:space-between;}
+  .su-phase:first-child{margin-top:0;}
+  .su-phase span{font-weight:500; color:var(--ink-faint);}
+  .su-req{display:flex; gap:10px; align-items:flex-start; font-size:13px; padding:6px 0; border-top:1px solid var(--line);}
+  .su-req:first-of-type{border-top:0;}
+  .su-req .st{flex:0 0 auto; font-size:11px; font-weight:600; border-radius:var(--r-sm); padding:2px 7px; color:var(--on-status);}
+  .su-req .st.ok{background:var(--interview);} .su-req .st.missing{background:var(--rejected);} .su-req .st.unknown{background:var(--ruledout);}
+  .su-req .fix{display:block; font-size:12px; color:var(--ink-faint);}
+  .su-links{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px; font-size:13px;}
+  .su-links a{color:var(--accent-ink); text-decoration:none; font-weight:600;}
+  .su-links a:hover{text-decoration:underline;}
+  .su-links .d{display:block; font-size:12px; color:var(--ink-faint); font-weight:400;}
+  .su-upd{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-size:13px;}
+  .su-upd .at{font-family:inherit; font-size:11.5px; color:var(--ink-faint); font-variant-numeric:tabular-nums; margin-right:6px;}
+  .su-qs{display:flex; flex-direction:column; gap:12px;}
+  .su-q{background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent-fill); border-radius:var(--r-lg); padding:14px 18px; display:flex; flex-direction:column; gap:8px;}
+  .su-q.answered{border-left-color:var(--interview);}
+  .su-q .q{font-size:14.5px; font-weight:600; color:var(--ink); line-height:1.45;}
+  .su-q .why{font-size:12.5px; color:var(--ink-soft);}
+  .su-q .src{font-size:11px; color:var(--ink-faint);}
+  .su-q textarea{width:100%; min-height:70px; resize:vertical; font:inherit; font-size:13.5px; color:var(--ink); background:var(--paper); border:1px solid var(--line-strong); border-radius:var(--r-md); padding:9px 11px; box-sizing:border-box;}
+  .su-q textarea:focus{outline:2px solid var(--accent); outline-offset:1px;}
+  .su-q .row{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+  .su-q .ans{font-size:13.5px; color:var(--ink-soft); white-space:pre-wrap; background:var(--surface-2); border-radius:var(--r-md); padding:9px 11px;}
+  .su-q .wait{font-size:12px; color:var(--t-interview); font-weight:600;}
+  .su-empty{font-size:13.5px; color:var(--ink-soft); background:var(--surface-2); border:1px dashed var(--line-strong); border-radius:var(--r-lg); padding:16px 20px;}
+  .su-copy{margin-top:6px; width:100%; font:inherit; font-size:12.5px; border:1px solid var(--line-strong); border-radius:var(--r-sm); padding:6px 8px; background:var(--paper); color:var(--ink);}
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="head-text">
+      <div class="eyebrow" id="pageEyebrow">Career Search — {{FULL_NAME}}</div>
+      <h1 id="pageTitle">Sollicitatiepijplijn</h1>
+      <div class="meta-row" id="metaRow"></div>
+    </div>
+    <div class="head-actions">
+      <div class="page-switch" role="group" aria-label="Pagina"><button type="button" data-page="pipe" aria-pressed="true">Pijplijn</button><button type="button" data-page="setup" aria-pressed="false">Opzet <span class="badge" id="setupBadge" hidden></span></button></div>
+      <button type="button" class="btn primary" id="newCardBtn">+ Nieuwe kaart</button>
+      <button type="button" class="anon-toggle" id="anonToggle" aria-pressed="false" title="Wissel naar een volledig verzonnen pijplijn">
+        <span class="dot" aria-hidden="true"></span><span id="anonToggleLabel">Demodata</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="anon-banner" id="anonBanner" hidden>
+    <b>Demodata.</b>
+    <span>Alle bedrijven, contacten, data, scores en statussen op deze pagina zijn verzonnen. De echte pijplijn wordt in deze weergave niet gelezen en niet getoond, dus een demo geeft niets prijs over waar de zoektocht staat. Het dossierpaneel, het logboek en de chat werken gewoon, maar schrijven enkel naar het geheugen van deze browser: ververs de pagina en de demo staat weer op de beginstand.</span>
+  </div>
+
+  <div id="dbWarning" hidden class="db-warning">Kan de gegevensopslag van deze pagina niet bereiken. Ververs de pagina, of vraag Claude de data opnieuw te schrijven.</div>
+
+  <div class="stats pipe-only" id="stats">
+    <div class="stat hot"><span class="n">–</span><span class="lbl">In gesprek</span></div>
+    <div class="stat accent"><span class="n">–</span><span class="lbl">Lopende sollicitaties</span></div>
+    <div class="stat explore"><span class="n">–</span><span class="lbl">In overweging</span></div>
+    <div class="stat declined"><span class="n">–</span><span class="lbl">Voorstel afgewezen</span></div>
+    <div class="stat closed"><span class="n">–</span><span class="lbl">Kandidatuur afgewezen</span></div>
+    <div class="stat silent"><span class="n">–</span><span class="lbl">Geen reactie</span></div>
+    <div class="stat ruled"><span class="n">–</span><span class="lbl">Gepasseerd</span></div>
+  </div>
+
+  <div class="next pipe-only" id="nextActionsBlock" hidden>
+    <div class="eyebrow">Eerstvolgende acties</div>
+    <ol id="nextActionsList"></ol>
+    <div class="undated" id="nextUndated" hidden></div>
+  </div>
+
+  <section class="pipeline pipe-only">
+    <div class="sect-head">
+      <div>
+        <h2 id="pipeTitle">Rollen op prioriteit</h2>
+        <p class="intro" id="pipeIntro">Klik een rij open voor het volledige dossier. Sorteer op fit of kans via de kolomtitels.</p>
+      </div>
+      <div class="view-switch" role="group" aria-label="Weergave">
+        <button type="button" data-view="table" aria-pressed="true">Tabel</button>
+        <button type="button" data-view="board" aria-pressed="false">Bord</button>
+        <button type="button" data-view="stats" aria-pressed="false">Stats</button>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span><b>Fit</b> hoe graag je de rol wil: seniority 50, domein 25, locatie 25</span>
+      <span class="sep">·</span>
+      <span><b>Kans</b> hoe waarschijnlijk je hem krijgt: bewijs 50, niveaulezing 25, ingang 25</span>
+      <span class="sep">·</span>
+      <span><b>Prio</b> fit × kans</span>
+    </div>
+
+    <div id="tableView">
+      <div class="filters" id="filters"></div>
+      <div class="rank-table" id="rankTable" style="margin-top:12px;"></div>
+    </div>
+
+    <div id="statsView" hidden>
+      <div class="an-grid" id="anGrid"></div>
+    </div>
+
+    <div id="boardView" hidden>
+      <div class="columns" id="columns">
+        <div class="col" data-stage="hot"><div class="col-head"><h3>In gesprek</h3><span class="count">–</span></div><div class="skeleton">Laden…</div></div>
+        <div class="col" data-stage="applied"><div class="col-head"><h3>Gesolliciteerd</h3><span class="count">–</span></div><div class="skeleton">Laden…</div></div>
+        <div class="col" data-stage="explore"><div class="col-head"><h3>In overweging</h3><span class="count">–</span></div><div class="skeleton">Laden…</div></div>
+        <div class="col" data-stage="closed"><div class="col-head"><h3>Gesloten</h3><span class="count">–</span></div><div class="skeleton">Laden…</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contacts pipe-only" id="contactsSection">
+    <h2>Netwerk &amp; recruiters</h2>
+    <p class="intro">Losstaand van formele sollicitaties: warme contacten, recruiters en verkennende gesprekken. Klik op een statustekst om het volledige verhaal op volle breedte te lezen.</p>
+    <div class="filters" id="contactFilters" style="margin-bottom:12px;"></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Contact</th><th>Type</th><th>Organisatie / rol</th><th>Status</th><th><button type="button" class="contact-sort" data-csort="1" aria-label="Sorteer op laatste actie">Laatste actie <span class="dir">↓</span></button></th></tr>
+        </thead>
+        <tbody id="contactsBody">
+          <tr><td colspan="5" class="skeleton">Laden…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <details class="closed-contacts" id="closedContacts" hidden>
+      <summary><span class="chev" aria-hidden="true">▸</span><span>Afgesloten contacten</span><span class="cnt" id="closedCount"></span></summary>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Contact</th><th>Type</th><th>Organisatie / rol</th><th>Status</th><th><button type="button" class="contact-sort" data-csort="1" aria-label="Sorteer op laatste actie">Laatste actie <span class="dir">↓</span></button></th></tr>
+          </thead>
+          <tbody id="closedContactsBody"></tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <section class="setup" id="setupSection" hidden></section>
+
+  <footer class="foot" id="footerBlock"></footer>
+
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<div class="job-tray" id="jobTray" hidden aria-live="polite"></div>
+<aside class="drawer" id="drawer" hidden aria-labelledby="drTitle" role="dialog">
+  <div class="dr-head">
+    <div><h2 id="drTitle"></h2><div class="sub" id="drSub"></div></div>
+    <button type="button" class="x" id="drClose" aria-label="Sluiten">✕</button>
+  </div>
+  <div class="dr-tools" id="drTools"></div>
+  <div class="dr-body" id="drBody"></div>
+  <div class="composer" id="composer">
+    <textarea id="chatInput" placeholder="Nieuws, een update of een vraag over dit dossier…"></textarea>
+    <div class="row">
+      <span class="hint" id="chatHint">Enter verstuurt · Shift+Enter nieuwe regel</span>
+      <span style="display:flex; gap:6px;">
+        <button type="button" class="btn small" id="chatStop" hidden>Stop</button>
+        <button type="button" class="btn primary small" id="chatSend">Versturen</button>
+      </span>
+    </div>
+  </div>
+</aside>
+
+<script>
+// Favicon: hoekkader uit de huisstijl met de initiaal van de kandidaat.
+// De ingesloten pagina erft anders het Claude-icoon.
+(function(){
+  try{
+    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">' +
+      '<rect width="120" height="120" rx="28" fill="#0b1222"></rect>' +
+      '<g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke="#ffffff">' +
+      '<path d="M24,42 V30 A6,6 0 0 1 30,24 H42" stroke="#7aa2ff"></path>' +
+      '<path d="M78,24 H90 A6,6 0 0 1 96,30 V42"></path>' +
+      '<path d="M24,78 V90 A6,6 0 0 0 30,96 H42"></path>' +
+      '<path d="M96,78 V90 A6,6 0 0 1 90,96 H78"></path>' +
+      '</g><text x="60" y="83" text-anchor="middle" font-family="Hanken Grotesk, sans-serif" ' +
+      'font-weight="800" font-size="66" fill="#ffffff">{{INITIAL}}</text></svg>';
+    var href = "data:image/svg+xml," + encodeURIComponent(svg);
+    Array.prototype.forEach.call(document.querySelectorAll("link[rel~='icon']"), function(el){
+      el.parentNode.removeChild(el);
+    });
+    var l = document.createElement("link");
+    l.setAttribute("rel", "icon");
+    l.setAttribute("type", "image/svg+xml");
+    l.setAttribute("sizes", "any");
+    l.setAttribute("href", href);
+    document.head.appendChild(l);
+  }catch(e){}
+})();
+(function(){
+  var STAGE_PILL_CLASS = { interview:"hot", applied:"applied", explore:"explore", declined:"declined", rejected:"rejected", noreply:"noreply", ruledout:"ruledout" };
+  var LIVE_STAGES = { interview:1, applied:1, explore:1 };
+  var SEN_CAP = { 0:25, 1:45, 2:60 };
+  var STAGE_SHORT = { interview:"in gesprek", applied:"gesolliciteerd", explore:"overweging", declined:"voorstel afgewezen", rejected:"kandidatuur afgewezen", noreply:"geen reactie", ruledout:"gepasseerd" };
+  var STAGE_ORDER = { interview:0, applied:1, explore:2, declined:3, rejected:4, noreply:5, ruledout:6 };
+  // Voorstel afgewezen is een afgesloten dossier: er kwam een aanbod en de kandidaat zei nee.
+  var CLOSED_STAGES = { declined:1, rejected:1, noreply:1, ruledout:1 };
+
+  function esc(s){
+    return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  var rolesById = new Map();
+  var contactsById = new Map();
+  var metaDoc = null;
+  var openRows = new Set();
+
+  function pref(key, fallback){
+    try{ var v = localStorage.getItem(key); return v == null ? fallback : v; }catch(e){ return fallback; }
+  }
+  function savePref(key, value){
+    try{ localStorage.setItem(key, value); }catch(e){}
+  }
+
+  var VIEWS = { table:1, board:1, stats:1 };
+  var view = VIEWS[pref("pijplijn.view", "table")] ? pref("pijplijn.view", "table") : "table";
+  var rankSort = "prio";
+  var SORT_KEYS = { prio:"Prio", fit:"Fit", win:"Kans" };
+  if(SORT_KEYS[pref("pijplijn.sort", "")]) rankSort = pref("pijplijn.sort", "prio");
+  var filter = pref("pijplijn.filter", "live");
+  var demoMode = pref("pijplijn.demo", "0") === "1";
+
+  // Wat uit de opslag komt, los van wat getekend wordt: zie applyDataset.
+  var liveRoles = new Map();
+  var liveContacts = new Map();
+  var liveMeta = null;
+
+  // =======================================================================
+  // Demodata
+  // Een volledig verzonnen pijplijn voor demo's: fictieve bedrijven, fictieve
+  // mensen, fictieve historie en statussen. De echte kaarten blijven in de
+  // opslag staan en worden in deze weergave niet gelezen of getoond, zodat
+  // een demo niets prijsgeeft over waar de zoektocht werkelijk staat.
+  // =======================================================================
+  var DEMO_META = {
+    title: "Sollicitatiepijplijn (demodata)",
+    subtitle: "Een verzonnen pijplijn om de tool te laten zien. Alle bedrijven, mensen, data en statussen hieronder zijn fictief.",
+    lastCompiled: "22 oktober 2026 (demodata)",
+    footerTopFunnel: "Demodata: 21 verzonnen rollen en 8 verzonnen contacten, bedoeld om de werking van het bord te tonen.",
+    footerNote: "Deze weergave bevat geen enkele regel uit een echt dossier.",
+    nextActions: [{ date:"2026-10-30", label:"Voorbeeld & Partners", note:"Verzonnen actie: longlist WealthTech doornemen." }]
+  };
+
+  // [id, bedrijf, rol, fase, sen, dom, loc, ev, lvl, rte]
+  // Fases: interview, applied, explore, declined (aanbod zelf afgewezen),
+  // rejected, noreply, ruledout.
+  var DEMO_ROLES = [
+    { id:"demo-nimbus", company:"Nimbus Wealth", role:"Chief Product Officer", stage:"interview",
+      sen:5, dom:5, loc:5, ev:4, lvl:5, rte:4, onRadar:"2026-09-02", cv:"2026-09-09",
+      interviews:"Eerste gesprek 1 oktober, tweede gesprek 15 oktober (verzonnen).",
+      next:"Derde gesprek met de verzonnen oprichters voorbereiden.", nextDate:"2026-10-27",
+      detail:"Fictieve WealthTech in Brussel, 90 mensen. In dit demoverhaal zoeken ze een eerste CPO om het platform van projectwerk naar product te brengen." },
+    { id:"demo-globex", company:"Globex Private Banking", role:"Chief Product Officer", stage:"interview",
+      sen:5, dom:5, loc:4, ev:3, lvl:4, rte:5, onRadar:"2026-08-20", cv:"2026-09-01",
+      interviews:"Kennismaking 6 oktober (verzonnen).",
+      next:"Verzonnen case over een digitaal onboardingtraject uitwerken.", nextDate:"2026-10-24",
+      detail:"Verzonnen private bank met 400 mensen. Het demoverhaal: de productrol bestaat nog niet en moet naast IT een eigen mandaat krijgen." },
+    { id:"demo-vlinder", company:"Vlinderbank", role:"VP Product", stage:"interview",
+      sen:4, dom:5, loc:5, ev:4, lvl:4, rte:3, onRadar:"2026-09-15", cv:"2026-09-22",
+      interviews:"Twee gesprekken in oktober (verzonnen).",
+      next:"Referenties doorgeven aan de verzonnen recruiter.", nextDate:"2026-11-03",
+      detail:"Fictieve retailbank die in dit demoverhaal drie productteams samenvoegt onder één VP." },
+    { id:"demo-acme", company:"Acme Asset Management", role:"Head of Product", stage:"applied",
+      sen:3, dom:5, loc:4, ev:3, lvl:3, rte:3, onRadar:"2026-09-28", cv:"2026-10-05",
+      next:"Opvolgmail sturen als er na twee weken niets komt.", nextDate:"2026-10-26",
+      detail:"Verzonnen vermogensbeheerder, 250 mensen. Vacature in dit demoverhaal: een platform voor discretionair beheer." },
+    { id:"demo-polderdam", company:"Polderdam Core Banking", role:"Head of Product", stage:"applied",
+      sen:3, dom:4, loc:5, ev:3, lvl:3, rte:2, onRadar:"2026-09-30", cv:"2026-10-08",
+      next:"Wachten op de verzonnen screening.", nextDate:"2026-11-05",
+      detail:"Fictieve corebanking-leverancier. Het demoverhaal: veel legacy, een roadmap die door klanten gedicteerd wordt." },
+    { id:"demo-kompas", company:"Kompas Accounting Cloud", role:"Head of Product", stage:"applied",
+      sen:3, dom:3, loc:5, ev:2, lvl:3, rte:2, onRadar:"2026-10-01", cv:"2026-10-12",
+      next:"Verzonnen productmanager op LinkedIn aanspreken.", nextDate:"2026-10-29",
+      detail:"Verzonnen boekhoudsoftware voor kmo's, 120 mensen, in dit demoverhaal net na een eerste groeironde." },
+    { id:"demo-meander", company:"Meander Payments", role:"Director of Product", stage:"applied",
+      sen:4, dom:4, loc:3, ev:2, lvl:4, rte:2, onRadar:"2026-09-18", cv:"2026-09-25",
+      next:"Nog één opvolging, daarna laten vallen.", nextDate:"2026-10-31",
+      detail:"Fictieve betaalspeler in Amsterdam. Weekpendel in dit demoverhaal, wat de locatiescore drukt." },
+    { id:"demo-zefier", company:"Zefier Robo-Advisor", role:"Head of Product", stage:"applied",
+      sen:3, dom:5, loc:4, ev:3, lvl:3, rte:4, onRadar:"2026-10-06", cv:"2026-10-15",
+      next:"Verzonnen warme introductie via Voorbeeld & Partners afwachten.", nextDate:"2026-10-28",
+      detail:"Verzonnen robo-advisor met 40 mensen, in dit demoverhaal op zoek naar iemand die het advieskader kan uitleggen aan toezichthouders." },
+    { id:"demo-zeppelin", company:"Zeppelin Invest", role:"Chief Product Officer", stage:"explore",
+      sen:5, dom:5, loc:3, ev:1, lvl:4, rte:2, onRadar:"2026-10-10",
+      next:"Verzonnen vacaturepagina in de gaten houden.", nextDate:"2026-11-07",
+      detail:"Fictieve beleggingsapp in Parijs. Nog geen openstaande rol in dit demoverhaal, wel een CPO die vertrekt." },
+    { id:"demo-stroopwafel", company:"Stroopwafel Software", role:"Chief Product Officer", stage:"explore",
+      sen:5, dom:2, loc:5, ev:1, lvl:3, rte:3, onRadar:"2026-10-14",
+      next:"Koffie met de verzonnen CEO vastleggen.", nextDate:"2026-11-12",
+      detail:"Verzonnen B2B-SaaS in Leuven, 60 mensen. Demoverhaal: breed mandaat, smal domein." },
+    { id:"demo-orion", company:"Orion Digital Partners", role:"Partner Product & Strategy", stage:"explore",
+      sen:4, dom:3, loc:5, ev:2, lvl:3, rte:3, onRadar:"2026-10-16",
+      detail:"Fictief consultancyhuis in Brussel. In dit demoverhaal een partnerrol met een eigen productpraktijk." },
+    { id:"demo-tulp", company:"Tulp Legal Tech", role:"Head of Product", stage:"explore",
+      sen:3, dom:2, loc:5, ev:1, lvl:3, rte:1, onRadar:"2026-10-18",
+      detail:"Verzonnen legal-tech met 35 mensen. Laagste prioriteit in dit demoverhaal: klein mandaat, ver domein." },
+    { id:"demo-brandaris", company:"Brandaris Wealth", role:"VP Product", stage:"declined",
+      sen:4, dom:5, loc:2, ev:5, lvl:4, rte:3, onRadar:"2026-08-12", cv:"2026-08-19",
+      interviews:"Drie verzonnen gesprekken in september, daarna een aanbod.",
+      detail:"Fictief platform in Zürich. Demoverhaal: het aanbod kwam er, maar de kandidaat wees het zelf af omdat de verhuizing niet paste." },
+    { id:"demo-umbrella", company:"Umbrella Insurtech", role:"VP Product", stage:"rejected",
+      sen:4, dom:4, loc:4, ev:3, lvl:3, rte:2, onRadar:"2026-08-05", cv:"2026-08-12", rej:"2026-08-26",
+      detail:"Fictieve insurtech. Demoverhaal: afgewezen omdat ze iemand met schadeverzekering-ervaring wilden." },
+    { id:"demo-okapi", company:"Okapi Recruitment Cloud", role:"Head of Product", stage:"rejected",
+      sen:3, dom:2, loc:5, ev:2, lvl:3, rte:1, onRadar:"2026-07-20", cv:"2026-07-28", rej:"2026-08-04",
+      detail:"Verzonnen HR-software. Demoverhaal: nee binnen een week, te ver van hun domein." },
+    { id:"demo-kwartel", company:"Kwartel Analytics", role:"Director of Product", stage:"rejected",
+      sen:4, dom:2, loc:4, ev:2, lvl:2, rte:1, onRadar:"2026-08-28", cv:"2026-09-04", rej:"2026-09-30",
+      detail:"Fictief analytics-huis. Demoverhaal: ze gingen voor een interne kandidaat." },
+    { id:"demo-dodo", company:"Dodo Analytics", role:"Head of Product", stage:"noreply",
+      sen:3, dom:2, loc:3, ev:1, lvl:2, rte:1, onRadar:"2026-07-02", cv:"2026-07-09",
+      detail:"Verzonnen dossier dat in dit demoverhaal nooit antwoord kreeg na een snelle sollicitatie." },
+    { id:"demo-vesper", company:"Vesper Wealth Platform", role:"Head of Product", stage:"noreply",
+      sen:3, dom:5, loc:2, ev:2, lvl:3, rte:1, onRadar:"2026-06-24", cv:"2026-07-01",
+      detail:"Fictief platform in Luxemburg. Demoverhaal: sollicitatie verstuurd, daarna stilte." },
+    { id:"demo-pangolin", company:"Pangolin Security", role:"Chief Product Officer", stage:"ruledout",
+      sen:5, dom:1, loc:4, ev:1, lvl:4, rte:1, onRadar:"2026-06-10",
+      detail:"Verzonnen cybersecurity-speler. In dit demoverhaal zelf gepasseerd: het domein ligt te ver." },
+    { id:"demo-fabriek", company:"Fabriek Negen Industrials", role:"Head of Digital Product", stage:"ruledout",
+      sen:3, dom:1, loc:4, ev:1, lvl:2, rte:1, onRadar:"2026-05-28",
+      detail:"Fictieve industriële groep. Demoverhaal: productrol zonder eigen team, dus gepasseerd." },
+    { id:"demo-marconi", company:"Marconi Telecom Group", role:"Product Lead", stage:"ruledout",
+      sen:2, dom:1, loc:5, ev:1, lvl:2, rte:1, onRadar:"2026-05-14",
+      detail:"Verzonnen telecomgroep. Demoverhaal: een niveau te laag, dus niet verder gezet." }
+  ];
+
+  var DEMO_CONTACTS = [
+    { id:"demo-c1", name:"Ada Voorbeeld", type:"executive_search", org:"Voorbeeld & Partners, partner financiële diensten",
+      status:"Verzonnen contact: houdt twee CPO-mandaten in WealthTech open en belt terug zodra er beweging is.",
+      lastAction:"16 okt", lastActionDate:"2026-10-16" },
+    { id:"demo-c2", name:"Bram Fictief", type:"executive_search", org:"Fictief Executive Search, director",
+      status:"Verzonnen contact: heeft het dossier bij Nimbus Wealth binnengebracht.",
+      lastAction:"9 okt", lastActionDate:"2026-10-09" },
+    { id:"demo-c3", name:"Cleo Demovelde", type:"other", org:"Nimbus Wealth, Chief Technology Officer",
+      status:"Verzonnen contact: tegenpartij in het tweede gesprek, wil de productorganisatie samen opzetten.",
+      lastAction:"15 okt", lastActionDate:"2026-10-15" },
+    { id:"demo-c4", name:"Dirk Verzonnen", type:"other", org:"Globex Private Banking, Head of Transformation",
+      status:"Verzonnen contact: eerste ingang bij Globex, kent het mandaat van binnenuit.",
+      lastAction:"6 okt", lastActionDate:"2026-10-06" },
+    { id:"demo-c5", name:"Esther Testers", type:"consultancy", org:"Orion Digital Partners, managing partner",
+      status:"Verzonnen contact: praat over een partnerrol met eigen productpraktijk.",
+      lastAction:"16 okt", lastActionDate:"2026-10-16" },
+    { id:"demo-c6", name:"Figo Dummy", type:"consultancy", org:"Dummy & Co, principal",
+      status:"Verzonnen contact: freelance-opdrachten in betalingen, achter de hand gehouden.",
+      lastAction:"1 okt", lastActionDate:"2026-10-01" },
+    { id:"demo-c7", name:"Greet Placeholder", type:"executive_search", org:"Placeholder Search, consultant",
+      status:"Verzonnen contact: zoekt vooral rollen een niveau lager, afgerond.",
+      lastAction:"12 sep", lastActionDate:"2026-09-12", closed:true },
+    { id:"demo-c8", name:"Hugo Proefpersoon", type:"other", org:"Umbrella Insurtech, VP Engineering",
+      status:"Verzonnen contact: dossier is afgewezen, contact blijft open voor later.",
+      lastAction:"26 aug", lastActionDate:"2026-08-26", closed:true }
+  ];
+
+  var demoRolesMap = null, demoContactsMap = null;
+  // De demodata is geschreven rond 22 oktober 2026. Zonder correctie staat elke
+  // actie later als achterstallig op het scherm. Alle demodatums schuiven
+  // daarom mee met vandaag, zodat de verzonnen pijplijn altijd actueel oogt.
+  var DEMO_ANCHOR = "2026-10-22";
+  var demoOffset = null;
+  function demoShift(iso){
+    if(!iso) return iso;
+    if(demoOffset == null) demoOffset = Math.round((Date.parse(isoToday()) - Date.parse(DEMO_ANCHOR)) / 86400000);
+    var d = new Date(Date.parse(iso) + demoOffset * 86400000);
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function demoShifted(d){
+    var o = {};
+    Object.keys(d).forEach(function(k){ o[k] = d[k]; });
+    o.onRadar = demoShift(d.onRadar); o.cv = demoShift(d.cv);
+    o.rej = demoShift(d.rej); o.nextDate = demoShift(d.nextDate);
+    o.lastActionDate = demoShift(d.lastActionDate);
+    return o;
+  }
+  function ensureDemoMeta(){
+    if(!DEMO_META.__shifted){
+      (DEMO_META.nextActions || []).forEach(function(a){ a.date = demoShift(a.date); });
+      DEMO_META.lastCompiled = shortDate(isoToday()) + " (demodata)";
+      DEMO_META.__shifted = true;
+    }
+    return DEMO_META;
+  }
+  function demoVacancyUrl(role){
+    return "https://www.linkedin.com/jobs/search/?keywords=" + encodeURIComponent(role);
+  }
+  function demoDossier(d){
+    return "Verzonnen dossier, enkel om de werking te tonen.\n\n" +
+      "Context: " + d.detail + "\n\n" +
+      "Beslissingen: dit dossier staat op " + (STAGE_SHORT[d.stage] || d.stage) + "." +
+      (d.next ? "\n\nOpen vragen: " + d.next : "");
+  }
+  function seedDemoLog(d){
+    var out = [];
+    function add(at, text, kind){ if(at) out.push({ __id:"seed-" + d.id + "-" + out.length, at:at, text:text, kind:kind, by:"demodata" }); }
+    add(d.onRadar, "Op de radar gezet via een verzonnen vacature op LinkedIn.");
+    add(d.cv, "CV verstuurd. Verzonnen regel, net als de rest van dit dossier.");
+    if(d.interviews) add(d.cv || d.onRadar, d.interviews);
+    add(d.rej, "Afwijzing ontvangen. Verzonnen regel.");
+    out.sort(function(a,b){ return String(b.at) < String(a.at) ? -1 : 1; });
+    return out;
+  }
+  function demoRoleMap(){
+    if(demoRolesMap) return demoRolesMap;
+    var m = new Map();
+    DEMO_ROLES.map(demoShifted).forEach(function(d, i){
+      var r = {
+        __id:d.id, company:d.company, role:d.role, stage:d.stage, order:i,
+        pillLabel:STAGE_SHORT[d.stage], detail:d.detail,
+        senScore:d.sen, domScore:d.dom, locScore:d.loc,
+        evScore:d.ev, lvlScore:d.lvl, rteScore:d.rte,
+        dateStamp:"Demodossier, volledig verzonnen."
+      };
+      if(d.onRadar) r.dateOnRadar = d.onRadar;
+      if(d.cv) r.cvSubmitted = d.cv;
+      if(d.rej) r.rejectionDate = d.rej;
+      if(d.interviews) r.interviewDates = d.interviews;
+      if(d.next) r.nextStep = d.next;
+      if(d.nextDate) r.nextStepDate = d.nextDate;
+      r.vacancyUrl = demoVacancyUrl(d.role);
+      if(d.stage === "applied" || d.stage === "interview") r.applyUrl = r.vacancyUrl;
+      r.dossier = demoDossier(d);
+      demoLogs.set(d.id, seedDemoLog(d));
+      m.set(d.id, r);
+    });
+    demoRolesMap = m;
+    return m;
+  }
+  function demoContactMap(){
+    if(demoContactsMap) return demoContactsMap;
+    var m = new Map();
+    DEMO_CONTACTS.map(demoShifted).forEach(function(d, i){
+      m.set(d.id, {
+        __id:d.id, name:d.name, type:d.type, org:d.org, status:d.status,
+        lastAction:shortDate(d.lastActionDate), lastActionDate:d.lastActionDate, closed:!!d.closed, order:i
+      });
+    });
+    demoContactsMap = m;
+    return m;
+  }
+
+  // Demo-opslag: dezelfde vorm als de echte opslag, maar volledig in het
+  // geheugen van deze browser. Zo werken het dossierpaneel, het logboek, de
+  // chat en Nieuwe kaart ook in de demo, terwijl er niets naar de echte
+  // kaarten geschreven wordt. Verversen zet de demo op de beginstand terug.
+  var demoLogs = new Map();      // kaart-id -> logregels
+  var demoLogWatch = new Map();  // kaart-id -> [callback]
+  var demoSeq = 0;
+  function demoLogOf(id){ if(!demoLogs.has(id)) demoLogs.set(id, []); return demoLogs.get(id); }
+  function demoDocs(id){
+    return demoLogOf(id).map(function(e){ return { id:e.__id, data:function(){ return e; } }; });
+  }
+  function demoEmit(id){
+    (demoLogWatch.get(id) || []).forEach(function(cb){ cb({ docs:demoDocs(id) }); });
+  }
+  function demoTarget(path){
+    var p = String(path).split("/");
+    if(p.length !== 2) return null;
+    if(p[0] === "roles") return { map:demoRoleMap(), id:p[1] };
+    if(p[0] === "contacts") return { map:demoContactMap(), id:p[1] };
+    return null;
+  }
+  function demoRefresh(){
+    applyDataset(); render();
+    if(drawerId && drawerId !== "__new__") renderDrawer();
+  }
+  var demoDb = {
+    doc:function(path){
+      return {
+        get:function(){
+          // De scoringsafspraak is geen persoonlijke data en mag uit de echte
+          // opslag komen, zodat een nieuwe demokaart dezelfde ladder gebruikt.
+          if(path === "meta/scoring" && dbRef) return dbRef.doc(path).get();
+          if(path === "meta/board") return Promise.resolve({ exists:true, data:function(){ return ensureDemoMeta(); } });
+          var t = demoTarget(path), r = t && t.map.get(t.id);
+          return Promise.resolve({ exists:!!r, data:function(){ return r; } });
+        },
+        set:function(obj){
+          var t = demoTarget(path);
+          if(!t) return Promise.resolve();
+          var doc = {}; Object.keys(obj).forEach(function(k){ doc[k] = obj[k]; });
+          doc.__id = t.id;
+          t.map.set(t.id, doc); demoRefresh();
+          return Promise.resolve();
+        },
+        update:function(ch){
+          if(path.indexOf("meta/") === 0){
+            Object.keys(ch).forEach(function(k){ DEMO_META[k] = ch[k]; });
+            demoRefresh(); return Promise.resolve();
+          }
+          var t = demoTarget(path), r = t && t.map.get(t.id);
+          if(!r) return Promise.reject(new Error("kaart niet gevonden"));
+          Object.keys(ch).forEach(function(k){ r[k] = ch[k]; });
+          demoRefresh();
+          return Promise.resolve();
+        }
+      };
+    },
+    collection:function(path){
+      var m = /^roles\/([^/]+)\/log$/.exec(String(path));
+      var rid = m ? m[1] : null;
+      return {
+        doc:function(){
+          var lid = "demo-log-" + (++demoSeq);
+          return {
+            set:function(obj){
+              if(!rid) return Promise.resolve();
+              var e = { __id:lid };
+              Object.keys(obj).forEach(function(k){ e[k] = obj[k]; });
+              demoLogOf(rid).unshift(e); demoEmit(rid);
+              return Promise.resolve();
+            },
+            delete:function(){
+              if(!rid) return Promise.resolve();
+              demoLogs.set(rid, demoLogOf(rid).filter(function(e){ return e.__id !== lid; }));
+              demoEmit(rid);
+              return Promise.resolve();
+            }
+          };
+        },
+        onSnapshot:function(cb){
+          if(!rid){ cb({ docs:[] }); return function(){}; }
+          var list = demoLogWatch.get(rid) || [];
+          list.push(cb); demoLogWatch.set(rid, list);
+          cb({ docs:demoDocs(rid) });
+          return function(){
+            demoLogWatch.set(rid, (demoLogWatch.get(rid) || []).filter(function(x){ return x !== cb; }));
+          };
+        }
+      };
+    }
+  };
+  // Alles wat schrijft of leest gaat hierlangs: in demodata de demo-opslag,
+  // anders de echte opslag van de pagina.
+  function store(){ return demoMode ? demoDb : dbRef; }
+
+  // De opslag vult liveRoles/liveContacts/liveMeta; rolesById en contactsById
+  // zijn wat de pagina tekent. In demodata wisselt alleen die bron.
+  function applyDataset(){
+    rolesById.clear(); contactsById.clear();
+    var rs = demoMode ? demoRoleMap() : liveRoles;
+    var cs = demoMode ? demoContactMap() : liveContacts;
+    rs.forEach(function(v, k){ rolesById.set(k, v); });
+    cs.forEach(function(v, k){ contactsById.set(k, v); });
+    metaDoc = demoMode ? ensureDemoMeta() : liveMeta;
+  }
+
+  function companyLabel(id, r){ return r.company || ""; }
+  function roleLabel(r){ return r.role || ""; }
+
+  // Fit = seniority 50 / domein 25 / locatie 25, geplafonneerd door seniority.
+  // Kans = bewijs 50 / niveaulezing 25 / ingang 25. Prio = fit x kans.
+  function scoreOf(r){
+    if(r == null || typeof r.senScore !== "number") return null;
+    var raw = 10*r.senScore + 5*(r.domScore||0) + 5*(r.locScore||0);
+    var cap = SEN_CAP[r.senScore];
+    var capped = (typeof cap === "number" && raw > cap);
+    var fit = capped ? cap : raw;
+    var win = null, prio = null;
+    if(typeof r.evScore === "number"){
+      win = Math.round((0.5*r.evScore + 0.25*(r.lvlScore||0) + 0.25*(r.rteScore||0)) * 20);
+      prio = Math.round(fit * win / 100);
+    }
+    return { fit:fit, win:win, prio:prio, capped:capped };
+  }
+
+  function pips(v){
+    var h = "";
+    for(var i=1; i<=5; i++){ h += '<i class="' + (i <= (v||0) ? "on" : "") + '"></i>'; }
+    return '<span class="pips">' + h + '</span>';
+  }
+
+  function render(){
+    renderHeader();
+    renderStats();
+    renderNextActions();
+    renderPipelineHead();
+    renderFilters();
+    renderTable();
+    renderColumns();
+    renderAnalytics();
+    renderContactFilters();
+    renderContacts();
+    renderFooter();
+    renderSetup();
+  }
+
+  function renderHeader(){
+    var m = metaDoc || {};
+    document.getElementById("pageEyebrow").textContent = demoMode ? "Career Search — demodata" : "Career Search — {{FULL_NAME}}";
+    document.getElementById("pageTitle").textContent = m.title || "Sollicitatiepijplijn";
+    var bits = [];
+    if(m.lastCompiled) bits.push("<span>Laatst bijgewerkt: " + esc(m.lastCompiled) + "</span>");
+    bits.push("<span>" + rolesById.size + " rollen gevolgd</span>");
+    var activeContacts = 0;
+    contactsById.forEach(function(c){ if(!c.closed) activeContacts++; });
+    bits.push("<span>" + activeContacts + " actieve netwerkcontacten</span>");
+    document.getElementById("metaRow").innerHTML = bits.join("");
+  }
+
+  function countByStage(stage){
+    var n = 0;
+    rolesById.forEach(function(r){ if(r.stage === stage) n++; });
+    return n;
+  }
+
+  function renderStats(){
+    document.getElementById("stats").innerHTML =
+      '<div class="stat hot"><span class="n">' + countByStage("interview") + '</span><span class="lbl">In gesprek</span></div>' +
+      '<div class="stat accent"><span class="n">' + countByStage("applied") + '</span><span class="lbl">Lopende sollicitaties</span></div>' +
+      '<div class="stat explore"><span class="n">' + countByStage("explore") + '</span><span class="lbl">In overweging</span></div>' +
+      '<div class="stat declined"><span class="n">' + countByStage("declined") + '</span><span class="lbl">Voorstel afgewezen</span></div>' +
+      '<div class="stat closed"><span class="n">' + countByStage("rejected") + '</span><span class="lbl">Kandidatuur afgewezen</span></div>' +
+      '<div class="stat silent"><span class="n">' + countByStage("noreply") + '</span><span class="lbl">Geen reactie</span></div>' +
+      '<div class="stat ruled"><span class="n">' + countByStage("ruledout") + '</span><span class="lbl">Gepasseerd</span></div>';
+  }
+
+  // Eerstvolgende acties worden afgeleid uit de kaarten: elke lopende kaart
+  // met een nextStepDate staat in de lijst, gesorteerd op datum. Enkel acties
+  // die bij geen kaart horen staan met de hand in meta/board.nextActions
+  // (met een eigen `date`). Gesloten kaarten vallen er vanzelf uit.
+  var WD = ["zo","ma","di","wo","do","vr","za"];
+  function isoToday(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function dueLabel(iso){
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); if(!m) return "";
+    var d = new Date(+m[1], +m[2]-1, +m[3]);
+    var M = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+    return WD[d.getDay()] + " " + d.getDate() + " " + M[d.getMonth()];
+  }
+  function daysFrom(iso){
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); if(!m) return null;
+    var t = new Date(); t.setHours(0,0,0,0);
+    return Math.round((new Date(+m[1], +m[2]-1, +m[3]) - t) / 86400000);
+  }
+  function firstSentence(t, max){
+    t = String(t || "").trim();
+    var m = /^(.{20,}?[.!?])(\s|$)/.exec(t);
+    var out = m ? m[1] : t;
+    return out.length > max ? out.slice(0, max - 1).replace(/\s+\S*$/, "") + "…" : out;
+  }
+  function dueTag(iso, when){
+    var n = daysFrom(iso);
+    var cls = n == null ? "" : n < 0 ? " overdue" : n === 0 ? " today" : "";
+    var txt = n == null ? (when || "zonder datum") : (n < 0 ? "achterstallig · " : n === 0 ? "vandaag · " : "") + dueLabel(iso);
+    return '<span class="when' + cls + '">' + esc(txt) + '</span>';
+  }
+  var showLater = false;
+  function renderNextActions(){
+    var block = document.getElementById("nextActionsBlock");
+    var list = document.getElementById("nextActionsList");
+    var items = [], undated = [];
+    rolesById.forEach(function(r, id){
+      if(!LIVE_STAGES[r.stage]) return;
+      if(r.nextStepDate) items.push({ date:r.nextStepDate, when:r.nextStepWhen, id:id, label:r.company || id, note:firstSentence(r.nextStep, 170) });
+      else if(r.stage === "interview" || r.stage === "applied") undated.push({ id:id, label:r.company || id });
+    });
+    var manual = (metaDoc && Array.isArray(metaDoc.nextActions)) ? metaDoc.nextActions : [];
+    manual.forEach(function(a){
+      if(a.roleId) return; // oude vorm: kaartacties komen nu uit de kaart zelf
+      items.push({ date:a.date || "", when:a.when, label:a.label, note:a.note || "", manual:true });
+    });
+    items.sort(function(a,b){ return (a.date || "9999") < (b.date || "9999") ? -1 : (a.date || "9999") > (b.date || "9999") ? 1 : 0; });
+    var soon = [], later = [];
+    items.forEach(function(it){ var n = daysFrom(it.date); (n == null || n <= 14 ? soon : later).push(it); });
+    if(!items.length && !undated.length){ block.hidden = true; list.innerHTML = ""; return; }
+    block.hidden = false;
+    function li(it){
+      var labelHtml = it.id ? '<button type="button" class="na-link" data-dossier="' + esc(it.id) + '">' + esc(it.label) + '</button>'
+        : "<b>" + esc(it.label) + "</b>";
+      var extra = (it.when && it.date) ? ' <span class="when-note">(' + esc(it.when) + ')</span>' : "";
+      return "<li>" + dueTag(it.date, it.when) + " " + labelHtml + extra + (it.note ? " — " + esc(it.note) : "") + "</li>";
+    }
+    var html = soon.map(li).join("");
+    if(later.length){
+      html += showLater ? later.map(li).join("") :
+        '<li class="na-more"><button type="button" class="na-link" id="naLater">Later (' + later.length + ') tonen</button></li>';
+    }
+    list.innerHTML = html;
+    var u = document.getElementById("nextUndated");
+    u.innerHTML = undated.length ? "Lopend zonder datum: " + undated.map(function(x){
+      return '<button type="button" class="na-link" data-dossier="' + esc(x.id) + '">' + esc(x.label) + '</button>';
+    }).join(", ") : "";
+    u.hidden = !undated.length;
+  }
+  document.getElementById("nextActionsBlock").addEventListener("click", function(ev){
+    if(ev.target.closest("#naLater")){ showLater = true; renderNextActions(); }
+  });
+
+  var VIEW_TITLE = { table:"Rollen op prioriteit", board:"Rollen per fase", stats:"Wat de pijplijn tot nu toe oplevert" };
+  var VIEW_INTRO = {
+    table:"Klik een rij open voor het volledige dossier. Sorteer op fit of kans via de kolomtitels.",
+    board:"Van eerste screening tot afgesloten dossier. Binnen elke kolom staan de kaarten op prioriteit.",
+    stats:"Uitkomsten van de afgesloten dossiers, de reactiegraad op verstuurde sollicitaties, en waar de lopende pijplijn op de drie criteria staat."
+  };
+
+  function renderPipelineHead(){
+    document.getElementById("pipeTitle").textContent = VIEW_TITLE[view] || VIEW_TITLE.table;
+    document.getElementById("pipeIntro").textContent = VIEW_INTRO[view] || VIEW_INTRO.table;
+    document.getElementById("tableView").hidden = view !== "table";
+    document.getElementById("statsView").hidden = view !== "stats";
+    document.getElementById("boardView").hidden = view !== "board";
+    Array.prototype.forEach.call(document.querySelectorAll(".view-switch button"), function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-view") === view ? "true" : "false");
+    });
+  }
+
+  // --- tabel -------------------------------------------------------------
+  var FILTERS = [
+    { key:"live",      label:"Lopend",         test:function(r){ return !!LIVE_STAGES[r.stage]; } },
+    { key:"interview", label:"In gesprek",     test:function(r){ return r.stage === "interview"; } },
+    { key:"applied",   label:"Gesolliciteerd", test:function(r){ return r.stage === "applied"; } },
+    { key:"explore",   label:"In overweging",  test:function(r){ return r.stage === "explore"; } },
+    { key:"closed",    label:"Gesloten",       test:function(r){ return !!CLOSED_STAGES[r.stage]; } },
+    { key:"declined",  label:"Voorstel afgewezen", test:function(r){ return r.stage === "declined"; } },
+    { key:"rejected",  label:"Kandidatuur afgewezen", test:function(r){ return r.stage === "rejected"; } },
+    { key:"noreply",   label:"Geen reactie",   test:function(r){ return r.stage === "noreply"; } },
+    { key:"ruledout",  label:"Gepasseerd",     test:function(r){ return r.stage === "ruledout"; } },
+    { key:"all",       label:"Alles",          test:function(){ return true; } }
+  ];
+  function activeFilter(){
+    for(var i=0; i<FILTERS.length; i++){ if(FILTERS[i].key === filter) return FILTERS[i]; }
+    return FILTERS[0];
+  }
+
+  function renderFilters(){
+    var counts = {};
+    FILTERS.forEach(function(f){ counts[f.key] = 0; });
+    rolesById.forEach(function(r){
+      FILTERS.forEach(function(f){ if(f.test(r)) counts[f.key]++; });
+    });
+    document.getElementById("filters").innerHTML = FILTERS.map(function(f){
+      return '<button type="button" data-filter="' + f.key + '" aria-pressed="' +
+        (f.key === filter ? "true" : "false") + '">' + esc(f.label) +
+        '<span class="cnt">' + counts[f.key] + '</span></button>';
+    }).join("");
+  }
+
+  function tableRoles(){
+    var f = activeFilter();
+    var out = [];
+    rolesById.forEach(function(r, id){ if(f.test(r)) out.push({ id:id, role:r, s:scoreOf(r) }); });
+    out.sort(function(a,b){
+      var va = (a.s && a.s[rankSort] != null) ? a.s[rankSort] : -1;
+      var vb = (b.s && b.s[rankSort] != null) ? b.s[rankSort] : -1;
+      if(vb !== va) return vb - va;
+      var sa = STAGE_ORDER[a.role.stage] == null ? 9 : STAGE_ORDER[a.role.stage];
+      var sb = STAGE_ORDER[b.role.stage] == null ? 9 : STAGE_ORDER[b.role.stage];
+      if(sa !== sb) return sa - sb;
+      return (a.role.order||0) - (b.role.order||0);
+    });
+    return out;
+  }
+
+  function sortTh(key){
+    return '<button type="button" class="sort-th" data-sortkey="' + key + '" aria-pressed="' +
+      (rankSort === key ? "true" : "false") + '">' + SORT_KEYS[key] +
+      (rankSort === key ? " ↓" : "") + '</button>';
+  }
+
+  function detailPanel(id, r){
+    var s = scoreOf(r);
+    var pipRows = '<div class="d-pips">' +
+      '<span class="pip-row"><em>Sen</em>' + pips(r.senScore) + '</span>' +
+      '<span class="pip-row"><em>Dom</em>' + pips(r.domScore) + '</span>' +
+      '<span class="pip-row"><em>Loc</em>' + pips(r.locScore) + '</span>' +
+      (s && s.capped ? '<span class="capped">seniority-plafond actief</span>' : '') +
+      '</div>';
+
+    var links = [];
+    if(r.briefUrl)   links.push('<a href="' + esc(r.briefUrl) + '" target="_blank" rel="noopener">Dossier ↗</a>');
+    if(r.vacancyUrl) links.push('<a href="' + esc(r.vacancyUrl) + '" target="_blank" rel="noopener">Vacature ↗</a>');
+    if(r.applyUrl)   links.push('<a href="' + esc(r.applyUrl) + '" target="_blank" rel="noopener">Solliciteren ↗</a>');
+
+    return '<div class="rank-detail">' +
+      '<button type="button" class="open-dossier" data-dossier="' + esc(id) + '">Dossier &amp; chat ›</button>' +
+      (r.pillLabel ? '<span class="pill ' + (STAGE_PILL_CLASS[r.stage] || "explore") + '">' + esc(r.pillLabel) + '</span>' : '') +
+      (r.role ? '<span class="d-role">' + esc(r.role) + '</span>' : '') +
+      pipRows +
+      (r.detail ? '<span class="d-text">' + esc(r.detail) + '</span>' : '') +
+      (r.nextStep ? '<span class="d-next"><b>Volgende stap' + (r.nextStepDate ? ' (' + esc(r.nextStepWhen || dueLabel(r.nextStepDate)) + ')' : '') + ':</b> ' + esc(r.nextStep) + '</span>' : '') +
+      (links.length ? '<span class="d-links">' + links.join("") + '</span>' : '') +
+      (r.dateStamp ? '<span class="d-stamp">' + esc(r.dateStamp) + '</span>' : '') +
+      '</div>';
+  }
+
+  function renderTable(){
+    var table = document.getElementById("rankTable");
+    var items = tableRoles();
+    if(!items.length){
+      table.innerHTML = '<div class="skeleton">Geen rollen in deze selectie.</div>';
+      return;
+    }
+    var max = 1;
+    items.forEach(function(it){
+      var v = (it.s && it.s[rankSort] != null) ? it.s[rankSort] : 0;
+      if(v > max) max = v;
+    });
+
+    var head = '<div class="rank-head">' +
+      '<span class="lbl">#</span>' +
+      '<span class="lbl">Bedrijf &amp; rol</span>' +
+      '<span class="lbl stage-col">Fase</span>' +
+      '<span class="lbl pip-col">Sen · Dom · Loc</span>' +
+      '<span class="lbl rank-bar">&nbsp;</span>' +
+      sortTh("fit") + sortTh("win") + sortTh("prio") +
+      '<span class="lbl">&nbsp;</span>' +
+      '</div>';
+
+    var rows = items.map(function(it, i){
+      var s = it.s;
+      var v = (s && s[rankSort] != null) ? s[rankSort] : 0;
+      var pct = Math.max(2, Math.round(v / max * 100));
+      function cell(key){
+        var val = (s && s[key] != null) ? s[key] : null;
+        return '<span class="val' + (rankSort === key ? " lead" : "") + (val == null ? " none" : "") + '">' +
+          (val == null ? "–" : val) + '</span>';
+      }
+      var isOpen = openRows.has(it.id);
+      var role = roleLabel(it.role);
+      return '<div class="rank-item' + (isOpen ? " open" : "") + '" data-stage="' + esc(it.role.stage) + '">' +
+        '<button type="button" class="rank-row" data-row="' + esc(it.id) + '" aria-expanded="' + (isOpen ? "true" : "false") + '">' +
+          '<span class="pos">' + (i+1) + '</span>' +
+          '<span class="who"><span class="co">' + esc(companyLabel(it.id, it.role)) + '</span>' + (jobs.has(it.id) ? '<span class="badge-busy">● bezig</span>' : '') +
+            (role ? '<span class="ro">' + esc(role) + '</span>' : '') + '</span>' +
+          '<span class="stage-col"><span class="stage-tag">' + esc(STAGE_SHORT[it.role.stage] || it.role.stage) + '</span></span>' +
+          '<span class="pip-col">' + pips(it.role.senScore) + pips(it.role.domScore) + pips(it.role.locScore) + '</span>' +
+          '<span class="rank-bar"><i style="width:' + pct + '%"></i></span>' +
+          cell("fit") + cell("win") + cell("prio") +
+          '<span class="chev" aria-hidden="true">▸</span>' +
+        '</button>' +
+        (isOpen ? detailPanel(it.id, it.role) : '') +
+        '</div>';
+    }).join("");
+
+    table.innerHTML = head + rows;
+  }
+
+  // --- bord --------------------------------------------------------------
+  function scoreBlock(r){
+    var s = scoreOf(r);
+    if(!s) return "";
+    var nums = '<span class="sc">Fit <b>' + s.fit + '</b></span>';
+    if(s.win != null) nums += '<span class="sc">Kans <b>' + s.win + '</b></span>';
+    if(s.capped) nums += '<span class="capped">seniority-plafond</span>';
+    return '<div class="score">' +
+      '<div class="score-nums">' + nums + '</div>' +
+      '<div class="pip-rows">' +
+        '<span class="pip-row"><em>Sen</em>' + pips(r.senScore) + '</span>' +
+        '<span class="pip-row"><em>Dom</em>' + pips(r.domScore) + '</span>' +
+        '<span class="pip-row"><em>Loc</em>' + pips(r.locScore) + '</span>' +
+      '</div>' +
+      '</div>';
+  }
+
+  function roleCard(r){
+    var pillClass = STAGE_PILL_CLASS[r.stage] || "explore";
+    var s = scoreOf(r);
+    var prioTag = (s && s.prio != null) ? '<span class="prio-tag">Prio <b>' + s.prio + '</b></span>' : '';
+
+    var nameHtml = r.briefUrl
+      ? '<a class="name-link" href="' + esc(r.briefUrl) + '" target="_blank" rel="noopener">' + esc(r.company) + '<span class="link-ico"> ↗</span></a>'
+      : esc(r.company);
+    return '<div class="card">' +
+      '<div class="card-top">' +
+        '<span class="pill ' + pillClass + '">' + esc(r.pillLabel || r.stage) + '</span>' + prioTag +
+      '</div>' +
+      '<span class="name">' + nameHtml + '</span>' +
+      (r.role ? '<span class="role">' + esc(r.role) + '</span>' : '') +
+      scoreBlock(r) +
+      (r.detail ? '<span class="detail">' + esc(r.detail) + '</span>' : '') +
+      (r.nextStep ? '<span class="next-step"><b>Volgende stap' + (r.nextStepDate ? ' (' + esc(r.nextStepWhen || dueLabel(r.nextStepDate)) + ')' : '') + ':</b> ' + esc(r.nextStep) + '</span>' : '') +
+      (r.vacancyUrl ? '<a class="vac-link" href="' + esc(r.vacancyUrl) + '" target="_blank" rel="noopener">Vacature ↗</a>' : '') +
+      (r.applyUrl ? '<a class="vac-link" href="' + esc(r.applyUrl) + '" target="_blank" rel="noopener">Solliciteren ↗</a>' : '') +
+      (r.dateStamp ? '<span class="datestamp">' + esc(r.dateStamp) + '</span>' : '') +
+      '<button type="button" class="open-dossier" data-dossier="' + esc(r.__id) + '">Dossier &amp; chat ›</button>' +
+      '</div>';
+  }
+
+  function sortedRoles(filterFn, byPriority){
+    var out = [];
+    rolesById.forEach(function(r){ if(filterFn(r)) out.push(r); });
+    if(byPriority){
+      out.sort(function(a,b){
+        var sa = scoreOf(a), sb = scoreOf(b);
+        var pa = (sa && sa.prio != null) ? sa.prio : -1;
+        var pb = (sb && sb.prio != null) ? sb.prio : -1;
+        if(pb !== pa) return pb - pa;
+        return (a.order||0) - (b.order||0);
+      });
+    } else {
+      out.sort(function(a,b){ return (a.order||0) - (b.order||0); });
+    }
+    return out;
+  }
+
+  function renderColumns(){
+    var groups = [
+      { stage:"hot", title:"In gesprek", prio:true, filter:function(r){ return r.stage === "interview"; } },
+      { stage:"applied", title:"Gesolliciteerd", prio:true, filter:function(r){ return r.stage === "applied"; } },
+      { stage:"explore", title:"In overweging", prio:true, filter:function(r){ return r.stage === "explore"; } },
+      { stage:"closed", title:"Gesloten", prio:false, filter:function(r){ return !!CLOSED_STAGES[r.stage]; } }
+    ];
+    document.getElementById("columns").innerHTML = groups.map(function(g){
+      var items = sortedRoles(g.filter, g.prio);
+      var body = items.length ? items.map(roleCard).join("")
+        : '<div class="empty-col">Nog geen rollen in deze fase.</div>';
+      return '<div class="col" data-stage="' + g.stage + '">' +
+        '<div class="col-head"><h3>' + g.title + '</h3><span class="count">' + items.length + '</span></div>' +
+        body + '</div>';
+    }).join("");
+  }
+
+  var TYPE_LABEL = { executive_search:"Executive search", consultancy:"Consultancy", other:"Overig" };
+  var MONTHS = { jan:1, feb:2, maa:3, mrt:3, apr:4, mei:5, jun:6, jul:7, aug:8, sep:9, okt:10, nov:11, dec:12 };
+  var contactSortDesc = pref("pijplijn.contactSort", "desc") !== "asc";
+  var CONTACT_TYPES = ["all", "executive_search", "consultancy", "other"];
+  var contactType = pref("pijplijn.contactType", "all");
+  if(CONTACT_TYPES.indexOf(contactType) === -1) contactType = "all";
+  var openContacts = new Set();
+
+  function typeKey(c){ return TYPE_LABEL[c.type] ? c.type : "other"; }
+
+  function renderContactFilters(){
+    var counts = { all:0, executive_search:0, consultancy:0, other:0 };
+    contactsById.forEach(function(c){ counts.all++; counts[typeKey(c)]++; });
+    document.getElementById("contactFilters").innerHTML = CONTACT_TYPES.map(function(k){
+      return '<button type="button" data-cfilter="' + k + '" aria-pressed="' +
+        (k === contactType ? "true" : "false") + '">' +
+        esc(k === "all" ? "Alle types" : TYPE_LABEL[k]) +
+        '<span class="cnt">' + counts[k] + '</span></button>';
+    }).join("");
+  }
+
+  // Sorteersleutel: lastActionDate (ISO) als die er is, anders de datum uit de vrije tekst van lastAction.
+  function contactDate(c){
+    if(c.lastActionDate && /^\d{4}-\d{2}-\d{2}$/.test(c.lastActionDate)) return c.lastActionDate;
+    var m = /(\d{1,2})\s+(jan|feb|maa|mrt|apr|mei|jun|jul|aug|sep|okt|nov|dec)/i.exec(c.lastAction || "");
+    if(!m) return "";
+    var mo = MONTHS[m[2].toLowerCase()], d = parseInt(m[1], 10);
+    return "2026-" + (mo < 10 ? "0" : "") + mo + "-" + (d < 10 ? "0" : "") + d;
+  }
+
+  // --- stats --------------------------------------------------------------
+  // Twee paletten, zoals het design system ze scheidt. STAGE_VAR zijn de
+  // statusvullingen: heldere tinten die navytekst dragen, voor statuscellen op
+  // het bord en in de tabel. MARK_VAR is het chartpalet, voor vlakken en
+  // stippen in de grafieken: die moeten contrast houden tegen de achtergrond,
+  // niet tegen tekst erop. Elk vlak houdt zijn eigen label, en de stippen in de
+  // spreiding hebben ook een eigen vorm, zodat kleur nooit alleen de identiteit
+  // draagt.
+  var STAGE_VAR = {
+    interview:"var(--interview)", applied:"var(--applied)", explore:"var(--explore)",
+    declined:"var(--declined)", rejected:"var(--rejected)", noreply:"var(--noreply)", ruledout:"var(--ruledout)"
+  };
+  var MARK_VAR = {
+    interview:"var(--mark-interview)", applied:"var(--mark-applied)", explore:"var(--mark-explore)",
+    declined:"var(--mark-declined)", rejected:"var(--chart-red)", noreply:"var(--chart-amber)", ruledout:"var(--chart-slate)"
+  };
+  function pct(n, total){ return total ? Math.round(n / total * 100) : 0; }
+  function daysBetween(a, b){
+    if(!a || !b) return null;
+    var d = (Date.parse(b) - Date.parse(a)) / 86400000;
+    return isFinite(d) && d >= 0 ? Math.round(d) : null;
+  }
+  function median(arr){
+    if(!arr.length) return null;
+    var a = arr.slice().sort(function(x,y){ return x - y; });
+    var m = Math.floor(a.length / 2);
+    return a.length % 2 ? a[m] : Math.round((a[m-1] + a[m]) / 2);
+  }
+  function barRow(label, value, max, colorVar, suffix){
+    return '<div class="bar-row">' +
+      '<span class="bar-lbl">' + esc(label) + '</span>' +
+      '<span class="bar-track"><i class="bar-fill" style="width:' + Math.max(1, pct(value, max)) +
+        '%;background:' + colorVar + '"></i></span>' +
+      '<span class="bar-val">' + value + (suffix ? '<span>' + esc(suffix) + '</span>' : '') + '</span>' +
+      '</div>';
+  }
+
+  function cardOutcomes(roles){
+    var c = { ruledout:0, declined:0, rejected:0, noreply:0 };
+    roles.forEach(function(r){ if(c[r.stage] != null) c[r.stage]++; });
+    var rows = [
+      ["Gepasseerd", c.ruledout, "var(--chart-slate)"],
+      ["Voorstel afgewezen", c.declined, "var(--mark-declined)"],
+      ["Kandidatuur afgewezen", c.rejected, "var(--chart-red)"],
+      ["Geen reactie", c.noreply, "var(--chart-amber)"]
+    ];
+    var total = rows.reduce(function(a, r){ return a + r[1]; }, 0);
+    var max = Math.max(1, Math.max.apply(null, rows.map(function(r){ return r[1]; })));
+    var top = rows.slice().sort(function(a, b){ return b[1] - a[1]; })[0];
+    var lead = total ? top[0].toLowerCase() : "";
+    return '<div class="an-card">' +
+      '<h3>Uitkomst van de afgesloten dossiers</h3>' +
+      '<p class="sub">' + total + ' gesloten dossiers, opgesplitst naar wie de deur dichtdeed.</p>' +
+      '<div class="bars">' +
+        rows.map(function(r){ return barRow(r[0], r[1], max, r[2], pct(r[1],total) + "%"); }).join("") +
+      '</div>' +
+      '<p class="an-note"><b>Gepasseerd</b> is jouw eigen beslissing voor er iets gebeurde, ' +
+      '<b>voorstel afgewezen</b> is een aanbod dat je zelf geweigerd hebt, ' +
+      '<b>kandidatuur afgewezen</b> is een expliciet nee op jouw kandidatuur, ' +
+      '<b>geen reactie</b> is stilte of een vacature die dichtging zonder antwoord. ' +
+      (total ? 'De grootste groep is nu <b>' + lead + '</b>.' : '') + '</p>' +
+      '</div>';
+  }
+
+  function cardResponse(roles){
+    // De fase bepaalt de emmer, de datums bepalen alleen de doorlooptijd.
+    // Geantwoord = in gesprek, voorstel afgewezen en kandidatuur afgewezen, precies die drie
+    // tegels bovenaan: in alle drie liet de tegenpartij iets weten. Een afwijzing
+    // veronderstelt een sollicitatie, ook als de verstuurdatum niet ingevuld is.
+    // Gepasseerd telt hier niet mee: daar heb jij de deur dichtgedaan, dus het
+    // is noch een antwoord noch stilte.
+    var inTalk = 0, turned = 0, offered = 0, silent = 0, pending = 0, noCv = 0, passedCv = 0, noDate = 0, lags = [];
+    roles.forEach(function(r){
+      if(r.stage === "interview"){ inTalk++; return; }
+      if(r.stage === "declined"){ offered++; return; }
+      if(r.stage === "rejected"){
+        turned++;
+        if(!r.cvSubmitted) noDate++;
+        var d = daysBetween(r.cvSubmitted, r.rejectionDate);
+        if(d != null) lags.push(d);
+        return;
+      }
+      if(r.stage === "applied"){ pending++; return; }
+      // Zonder sollicitatie is er niets om op te antwoorden: die dossiers staan
+      // wel onder 'geen reactie' in de pijplijn, maar niet in deze noemer.
+      if(r.stage === "noreply"){ if(r.cvSubmitted) silent++; else noCv++; return; }
+      // Zelf gepasseerd nadat je solliciteerde: zij lieten niets horen, dus dat
+      // is stilte. Het dossier staat onder Gepasseerd in de pijplijn, want daar
+      // gaat het over jouw beslissing; hier gaat het over hun antwoord.
+      if(r.stage === "ruledout" && r.cvSubmitted){ silent++; passedCv++; }
+    });
+    var replied = inTalk + turned + offered;
+    var decided = replied + silent;
+    var sent = replied + pending + silent;
+    var med = median(lags);
+    // Twee noemers, bewust uit elkaar gehouden: de ratio bovenaan gaat over
+    // beslechte dossiers, de verdeling eronder over alles wat verstuurd is.
+    var wReplied = pct(replied, decided);
+    var sR = pct(replied, sent), sP = pct(pending, sent), sS = 100 - sR - sP;
+    return '<div class="an-card">' +
+      '<h3>Reactiegraad op verstuurde sollicitaties</h3>' +
+      '<p class="sub">Geantwoord zijn de tegels <b>in gesprek</b>, <b>voorstel afgewezen</b> en ' +
+        '<b>kandidatuur afgewezen</b>: ' +
+        'in alle drie liet de tegenpartij iets weten. ' +
+        'De ratio telt de ' + decided + ' beslechte dossiers, de verdeling eronder loopt over alle ' + sent +
+        ' verstuurde sollicitaties.</p>' +
+      '<div class="hero"><span class="n">' + wReplied + '%</span>' +
+        '<span class="of">kreeg een antwoord, ' + replied + ' van ' + decided + ' beslecht</span></div>' +
+      '<div class="split">' +
+        '<i style="width:' + sR + '%;background:var(--score-ink)"></i>' +
+        '<i style="width:' + sP + '%;background:var(--chart-slate)"></i>' +
+        '<i style="width:' + sS + '%;background:var(--chart-amber)"></i>' +
+      '</div>' +
+      '<div class="an-legend">' +
+        '<span><i style="background:var(--score-ink)"></i>Geantwoord <b>' + replied + '</b> · ' + sR + '%' +
+          ' <span style="color:var(--ink-faint)">(' + inTalk + ' in gesprek + ' + offered + ' voorstel afgewezen + ' +
+          turned + ' kandidatuur afgewezen)</span></span>' +
+        '<span><i style="background:var(--chart-slate)"></i>Wachten <b>' + pending + '</b> · ' + sP + '%</span>' +
+        '<span><i style="background:var(--chart-amber)"></i>Geen antwoord na sollicitatie <b>' + silent + '</b> · ' + sS + '%</span>' +
+        '<span>Totaal verstuurd <b>' + sent + '</b></span>' +
+      '</div>' +
+      '<div class="kv">' +
+        (noCv ? '<span>Plus <b>' + noCv + '</b> ' + (noCv === 1 ? 'contact zonder sollicitatie dat stil bleef' : 'contacten zonder sollicitatie die stil bleven') +
+          ', samen <b>' + (silent - passedCv + noCv) + '</b> onder Geen reactie in de pijplijn</span>' : '') +
+        (passedCv ? '<span>Geen antwoord bevat <b>' + passedCv + '</b> dossiers die je zelf gepasseerd bent na je sollicitatie, in de pijplijn staan die onder Gepasseerd</span>' : '') +
+        (med != null ? '<span>Mediane tijd tot afwijzing <b>' + med + '</b> dagen</span>' : '') +
+        (lags.length ? '<span>Snelste <b>' + Math.min.apply(null, lags) + '</b> · traagste <b>' +
+          Math.max.apply(null, lags) + '</b></span>' : '') +
+        (noDate ? '<span>Bij <b>' + noDate + '</b> afwijzingen staat geen verstuurdatum, die tellen niet mee in de doorlooptijd</span>' : '') +
+      '</div>' +
+      '<p class="an-note">Een nee binnen enkele dagen is bijna altijd een harde domeingap of een niveaulezing. ' +
+      'Stilte zegt vooral iets over het kanaal, niet over het dossier. ' +
+      '<b>Wachten</b> zijn dossiers die nog in gesolliciteerd staan, dus nog niet beantwoord en nog niet stil. ' +
+      'Passeerde je een dossier nadat je solliciteerde, dan telt het hier als <b>geen antwoord</b>: zij lieten niets horen. ' +
+      'Passeerde je voor je solliciteerde, dan staat er niets om op te antwoorden en telt het hier niet mee.</p>' +
+      '</div>';
+  }
+
+  // Eigen vorm per fase: cirkel, vierkant, driehoek. Gesolliciteerd (blauw) en
+  // overweging (violet) liggen in kleurafstand te dicht bij elkaar om alleen op
+  // kleur te onderscheiden, dus draagt de vorm het verschil.
+  function marker(stage, cx, cy, r){
+    var fill = MARK_VAR[stage] || "var(--mark-explore)";
+    if(stage === "applied"){
+      return '<rect class="sc-dot" x="' + (cx - r) + '" y="' + (cy - r) + '" width="' + (2*r) +
+        '" height="' + (2*r) + '" rx="1" fill="' + fill + '"/>';
+    }
+    if(stage === "explore"){
+      var h = r * 1.25;
+      return '<polygon class="sc-dot" points="' + cx + ',' + (cy - h) + ' ' + (cx + h) + ',' +
+        (cy + h*0.75) + ' ' + (cx - h) + ',' + (cy + h*0.75) + '" fill="' + fill + '"/>';
+    }
+    return '<circle class="sc-dot" cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + fill + '"/>';
+  }
+  function markerChip(stage){
+    return '<svg class="mk" viewBox="0 0 14 14" aria-hidden="true" width="12" height="12">' +
+      marker(stage, 7, 7, 5) + '</svg>';
+  }
+
+  function cardScatter(live){
+    var pts = [];
+    live.forEach(function(r){
+      var s = scoreOf(r);
+      if(!s || s.win == null) return;
+      pts.push({ r:r, fit:s.fit, win:s.win, prio:s.prio });
+    });
+    var W = 430, H = 300, P = { l:42, r:14, t:14, b:38 };
+    function X(v){ return P.l + (v / 100) * (W - P.l - P.r); }
+    function Y(v){ return H - P.b - (v / 100) * (H - P.t - P.b); }
+    var mf = median(pts.map(function(p){ return p.fit; }));
+    var mw = median(pts.map(function(p){ return p.win; }));
+    var g = "";
+    [0,25,50,75,100].forEach(function(t){
+      // Design system: enkel horizontale rasterlijnen, gestippeld, geen verticale.
+      g += '<line x1="' + X(0) + '" y1="' + Y(t) + '" x2="' + X(100) + '" y2="' + Y(t) +
+        '" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 4"/>';
+      g += '<text x="' + X(t) + '" y="' + (H - P.b + 15) + '" fill="var(--ink-faint)" font-size="10" ' +
+        'font-family="Hanken Grotesk, system-ui, sans-serif" text-anchor="middle">' + t + '</text>';
+      g += '<text x="' + (P.l - 7) + '" y="' + (Y(t) + 3.5) + '" fill="var(--ink-faint)" font-size="10" ' +
+        'font-family="Hanken Grotesk, system-ui, sans-serif" text-anchor="end">' + t + '</text>';
+    });
+    if(mf != null){
+      g += '<line x1="' + X(mf) + '" y1="' + Y(0) + '" x2="' + X(mf) + '" y2="' + Y(100) +
+        '" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="3 3"/>';
+      g += '<line x1="' + X(0) + '" y1="' + Y(mw) + '" x2="' + X(100) + '" y2="' + Y(mw) +
+        '" stroke="var(--ink-faint)" stroke-width="1" stroke-dasharray="3 3"/>';
+    }
+    pts.forEach(function(p){
+      var cx = X(p.fit), cy = Y(p.win);
+      var name = p.r.company;
+      g += marker(p.r.stage, cx, cy, 5.5);
+      g += '<circle class="sc-hit" cx="' + cx + '" cy="' + cy + '" r="11"><title>' +
+        esc(name) + ' — fit ' + p.fit + ', kans ' + p.win + ', prio ' + p.prio + '</title></circle>';
+    });
+    g += '<text x="' + X(50) + '" y="' + (H - 4) + '" fill="var(--ink-soft)" font-size="11" ' +
+      'text-anchor="middle">Fit</text>';
+    g += '<text x="12" y="' + Y(50) + '" fill="var(--ink-soft)" font-size="11" text-anchor="middle" ' +
+      'transform="rotate(-90 12 ' + Y(50) + ')">Kans</text>';
+
+    var hi = pts.filter(function(p){ return p.fit >= (mf||0) && p.win < (mw||0); }).length;
+    return '<div class="an-card wide">' +
+      '<h3>Fit tegen kans</h3>' +
+      '<p class="sub">' + pts.length + ' lopende rollen. Rechtsboven is waar de tijd naartoe hoort, ' +
+      'rechtsonder zijn de dossiers die een warme ingang nodig hebben.</p>' +
+      '<div class="sc-wrap"><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" ' +
+        'aria-label="Spreidingsdiagram van fit tegen kans per lopende rol">' + g + '</svg></div>' +
+      '<div class="an-legend">' +
+        '<span>' + markerChip("interview") + 'In gesprek</span>' +
+        '<span>' + markerChip("applied") + 'Gesolliciteerd</span>' +
+        '<span>' + markerChip("explore") + 'In overweging</span>' +
+        '<span>Stippellijnen: mediaan fit ' + (mf != null ? mf : "–") + ' en mediaan kans ' + (mw != null ? mw : "–") + '</span>' +
+      '</div>' +
+      '<p class="an-note">Houd de cursor op een stip voor bedrijf en scores. ' +
+      '<b>' + hi + '</b> rollen zitten boven de mediane fit maar onder de mediane kans: ' +
+      'hoge aantrekkelijkheid, lage slaagkans, dus daar werkt een introductie beter dan een zoveelste sollicitatie.</p>' +
+      '</div>';
+  }
+
+  function cardComposition(live){
+    var keys = [["Sen","senScore"], ["Dom","domScore"], ["Loc","locScore"]];
+    var rows = keys.map(function(k){
+      var buckets = [0,0,0,0,0,0];
+      live.forEach(function(r){
+        var v = r[k[1]];
+        if(typeof v === "number" && v >= 0 && v <= 5) buckets[v]++;
+      });
+      var total = buckets.reduce(function(a,c){ return a + c; }, 0) || 1;
+      var segs = buckets.map(function(n, i){
+        if(!n) return "";
+        var w = n / total * 100;
+        return '<i style="width:' + w + '%;background:var(--seq' + i + ');color:' +
+          (i >= 4 ? "var(--surface)" : "var(--ink)") + '" title="score ' + i + ': ' + n + ' rollen">' +
+          (w > 7 ? n : "") + '</i>';
+      }).join("");
+      return '<div class="stack-row"><em>' + k[0] + '</em><span class="stack">' + segs + '</span></div>';
+    }).join("");
+    var legend = [0,1,2,3,4,5].map(function(i){
+      return '<span><i style="background:var(--seq' + i + ')"></i>' + i + '</span>';
+    }).join("");
+    return '<div class="an-card wide">' +
+      '<h3>Samenstelling van de lopende pijplijn</h3>' +
+      '<p class="sub">Verdeling van de scores 0 tot 5 over ' + live.length + ' lopende rollen, per criterium.</p>' +
+      '<div class="bars">' + rows + '</div>' +
+      '<div class="an-legend">' + legend + '<span>donkerder is een hogere score</span></div>' +
+      '<p class="an-note">Hier zie je waar de pijplijn scheef zit. Veel massa links bij <b>Loc</b> betekent ' +
+      'dat je vooral buiten de dagpendelzone solliciteert, veel massa links bij <b>Sen</b> dat je onder je eigen niveau zit.</p>' +
+      '</div>';
+  }
+
+  function renderAnalytics(){
+    var grid = document.getElementById("anGrid");
+    if(view !== "stats"){ return; }
+    var all = [], live = [], closed = [];
+    rolesById.forEach(function(r){
+      all.push(r);
+      if(LIVE_STAGES[r.stage]) live.push(r);
+      if(CLOSED_STAGES[r.stage]) closed.push(r);
+    });
+    if(!all.length){ grid.innerHTML = '<div class="skeleton">Nog geen data.</div>'; return; }
+    grid.innerHTML = cardOutcomes(closed) + cardResponse(all) + cardScatter(live) + cardComposition(live);
+  }
+
+  function renderContacts(){
+    var body = document.getElementById("contactsBody");
+    document.getElementById("contactsSection").hidden = false;
+    var items = [], closed = [];
+    contactsById.forEach(function(c){
+      if(contactType !== "all" && typeKey(c) !== contactType) return;
+      (c.closed ? closed : items).push(c);
+    });
+    function byDate(a,b){
+      var da = contactDate(a), db = contactDate(b);
+      if(da !== db){
+        if(!da) return 1;
+        if(!db) return -1;
+        return contactSortDesc ? (da < db ? 1 : -1) : (da < db ? -1 : 1);
+      }
+      return (a.order||0) - (b.order||0);
+    }
+    items.sort(byDate); closed.sort(byDate);
+    Array.prototype.forEach.call(document.querySelectorAll(".contact-sort .dir"), function(el){
+      el.textContent = contactSortDesc ? "↓" : "↑";
+    });
+    function row(c){
+      var t = typeKey(c);
+      var id = c.__id || c.name;
+      var isOpen = openContacts.has(id);
+      var out = '<tr' + (isOpen ? ' class="open"' : '') + '><td class="name">' + esc(c.name) + '</td>' +
+        '<td><span class="type-tag ' + t + '">' + esc(TYPE_LABEL[t]) + '</span></td>' +
+        '<td class="org">' + esc(c.org) + '</td>' +
+        '<td><button type="button" class="st-btn" data-cexp="' + esc(id) + '" aria-expanded="' +
+          (isOpen ? "true" : "false") + '"><span class="chev" aria-hidden="true">▸</span>' +
+          esc(c.status || "—") + '</button></td>' +
+        '<td class="date">' + esc(c.lastAction || "—") + '</td></tr>';
+      if(isOpen){
+        out += '<tr class="st-detail"><td colspan="5"><div class="st-full">' +
+          '<span class="lbl">Status</span>' + esc(c.status || "—") +
+          (c.org ? '<span class="org-line"><span class="lbl">Organisatie / rol</span>' + esc(c.org) + '</span>' : '') +
+          '</div></td></tr>';
+      }
+      return out;
+    }
+    body.innerHTML = items.length ? items.map(row).join("")
+      : '<tr><td colspan="5" class="skeleton">Geen actieve contacten.</td></tr>';
+    var box = document.getElementById("closedContacts");
+    box.hidden = !closed.length;
+    document.getElementById("closedCount").textContent = closed.length;
+    document.getElementById("closedContactsBody").innerHTML = closed.map(row).join("");
+  }
+
+  function renderFooter(){
+    var m = metaDoc || {};
+    var parts = [];
+    if(m.footerTopFunnel) parts.push('<p><b>Top-of-funnel:</b> ' + esc(m.footerTopFunnel) + '</p>');
+    if(m.footerNote) parts.push('<p>' + esc(m.footerNote) + '</p>');
+    document.getElementById("footerBlock").innerHTML = parts.join("");
+  }
+
+  // --- interactie ---------------------------------------------------------
+  document.querySelector(".view-switch").addEventListener("click", function(ev){
+    var btn = ev.target.closest("[data-view]");
+    if(!btn) return;
+    view = VIEWS[btn.getAttribute("data-view")] ? btn.getAttribute("data-view") : "table";
+    savePref("pijplijn.view", view);
+    render();
+  });
+
+  document.getElementById("filters").addEventListener("click", function(ev){
+    var btn = ev.target.closest("[data-filter]");
+    if(!btn) return;
+    filter = btn.getAttribute("data-filter");
+    savePref("pijplijn.filter", filter);
+    renderFilters();
+    renderTable();
+  });
+
+  document.getElementById("rankTable").addEventListener("click", function(ev){
+    var sort = ev.target.closest("[data-sortkey]");
+    if(sort){
+      var key = sort.getAttribute("data-sortkey");
+      if(SORT_KEYS[key]){
+        rankSort = key;
+        savePref("pijplijn.sort", key);
+        renderTable();
+      }
+      return;
+    }
+    var row = ev.target.closest("[data-row]");
+    if(!row) return;
+    var id = row.getAttribute("data-row");
+    if(openRows.has(id)) openRows.delete(id); else openRows.add(id);
+    renderTable();
+  });
+
+  document.getElementById("contactsSection").addEventListener("click", function(ev){
+    if(ev.target.closest("[data-csort]")){
+      contactSortDesc = !contactSortDesc;
+      savePref("pijplijn.contactSort", contactSortDesc ? "desc" : "asc");
+      renderContacts();
+      return;
+    }
+    var chip = ev.target.closest("[data-cfilter]");
+    if(chip){
+      contactType = chip.getAttribute("data-cfilter");
+      savePref("pijplijn.contactType", contactType);
+      renderContactFilters();
+      renderContacts();
+      return;
+    }
+    var exp = ev.target.closest("[data-cexp]");
+    if(exp){
+      var id = exp.getAttribute("data-cexp");
+      if(openContacts.has(id)) openContacts.delete(id); else openContacts.add(id);
+      renderContacts();
+    }
+  });
+
+  function applyDemoUI(){
+    var btn = document.getElementById("anonToggle");
+    btn.setAttribute("aria-pressed", demoMode ? "true" : "false");
+    document.getElementById("anonToggleLabel").textContent = demoMode ? "Demodata aan" : "Demodata";
+    document.getElementById("anonBanner").hidden = !demoMode;
+  }
+
+  document.getElementById("anonToggle").addEventListener("click", function(){
+    demoMode = !demoMode;
+    savePref("pijplijn.demo", demoMode ? "1" : "0");
+    if(demoMode && drawerId) closeDrawer();
+    applyDemoUI();
+    applyDataset();
+    render();
+  });
+
+  // =======================================================================
+  // Dossier & chat
+  // Elke kaart heeft een dossier (veld `dossier`) en een logboek
+  // (subcollectie roles/<id>/log). De chat leest kaart + dossier + logboek
+  // mee en schrijft wijzigingen terug via page-tools.
+  // =======================================================================
+  var dbRef = null;
+  var sampleFn = null;         // null: chat niet beschikbaar in deze weergave
+  var sampleDead = false;      // na not_granted e.d. niet opnieuw proberen
+  var drawerId = null;         // open kaart-id, of "__new__"
+  var logUnsub = null;
+  var logEntries = [];
+  var chats = new Map();       // id -> [{role, content}] (enkel deze sessie)
+  var chatView = new Map();    // id -> [html-blokken]
+  // Lopende taken per kaart: een update loopt door als je het paneel sluit,
+  // en meerdere kaarten kunnen tegelijk bezig zijn.
+  var jobs = new Map();        // id -> {ctl, start, label, name}
+  var doneNotes = [];          // [{id, name, ok, at}]
+  var intake = null;           // voorstel voor een nieuwe kaart
+
+  var ROLE_FIELDS = {
+    company:"s", role:"s", stage:"stage", pillLabel:"s", detail:"s", nextStep:"s", nextStepDate:"date", nextStepWhen:"s", dateStamp:"s",
+    dateOnRadar:"date", cvSubmitted:"date", rejectionDate:"date", interviewDates:"s",
+    motivationLetter:"ml", applicationType:"at", vacancyUrl:"s", applyUrl:"s",
+    senScore:"n", domScore:"n", locScore:"n", evScore:"n", lvlScore:"n", rteScore:"n"
+  };
+  var CONTACT_FIELDS = { status:"s", lastAction:"s", lastActionDate:"date", closed:"b", org:"s" };
+  var ENUMS = {
+    stage:["interview","applied","explore","declined","rejected","noreply","ruledout"],
+    ml:["yes","no","unknown"], at:["easy_apply","extended","unknown"]
+  };
+
+  function today(){
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+  }
+  function shortDate(iso){
+    var M = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || "");
+    return m ? (parseInt(m[3],10) + " " + M[parseInt(m[2],10)-1]) : (iso || "");
+  }
+  function cleanValue(kind, v, enumKey){
+    if(kind === "s") return String(v == null ? "" : v);
+    if(kind === "date"){ v = String(v || ""); if(v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error("datum moet YYYY-MM-DD zijn"); return v; }
+    if(kind === "n"){ var n = Number(v); if(!(n >= 0 && n <= 5) || Math.round(n) !== n) throw new Error("score moet een geheel getal 0-5 zijn"); return n; }
+    if(kind === "b") return !!v;
+    var list = ENUMS[kind];
+    if(list){ v = String(v); if(list.indexOf(v) === -1) throw new Error("ongeldige waarde " + v + " (toegestaan: " + list.join(", ") + ")"); return v; }
+    return v;
+  }
+  function cleanChanges(changes, spec){
+    if(!changes || typeof changes !== "object") throw new Error("changes ontbreekt");
+    var out = {};
+    Object.keys(changes).forEach(function(k){
+      if(!spec[k]) throw new Error("veld " + k + " mag niet gewijzigd worden");
+      out[k] = cleanValue(spec[k], changes[k]);
+    });
+    if(!Object.keys(out).length) throw new Error("geen wijzigingen");
+    return out;
+  }
+
+  function contactsFor(r){
+    var keys = [];
+    String(r.company || "").split(/[\s()\/,·-]+/).forEach(function(w){
+      if(w.length >= 3 && !/^(the|and|group|belgium|bank|software)$/i.test(w)) keys.push(w.toLowerCase());
+    });
+    var out = [];
+    contactsById.forEach(function(c, id){
+      var hay = ((c.org || "") + " " + (c.status || "")).toLowerCase();
+      if(keys.some(function(k){ return hay.indexOf(k) !== -1; })) out.push({ id:id, c:c });
+    });
+    return out;
+  }
+
+  function stripMeta(r){
+    var o = {};
+    Object.keys(r).forEach(function(k){ if(k !== "__id") o[k] = r[k]; });
+    return o;
+  }
+
+  // ---------- drawer ----------
+  function openDrawer(id){
+    drawerId = id;
+    document.getElementById("drawer").hidden = false;
+    document.getElementById("scrim").hidden = false;
+    if(logUnsub){ try{ logUnsub(); }catch(e){} logUnsub = null; }
+    logEntries = [];
+    if(id !== "__new__" && store()){
+      logUnsub = store().collection("roles/" + id + "/log").onSnapshot(function(qs){
+        logEntries = qs.docs.map(function(d){ var x = d.data() || {}; x.__id = d.id; return x; });
+        logEntries.sort(function(a,b){ return String(b.at||"") < String(a.at||"") ? -1 : 1; });
+        renderDrawer();
+      }, function(){});
+    }
+    renderDrawer(true);
+    syncComposer(); renderJobs();
+    setTimeout(function(){ document.getElementById("chatInput").focus(); }, 30);
+  }
+  function closeDrawer(){
+    if(logUnsub){ try{ logUnsub(); }catch(e){} logUnsub = null; }
+    drawerId = null;
+    syncComposer(); renderJobs();
+    document.getElementById("drawer").hidden = true;
+    document.getElementById("scrim").hidden = true;
+  }
+
+  function coworkPrompt(id, r){
+    return "Werk verder aan het dossier " + (r.company || id) + " (kaart \"" + id +
+      "\" in de Sollicitatiepijplijn). Lees eerst de kaart, het dossier en het logboek, en werk ze bij zodra er iets verandert.";
+  }
+
+  function renderDrawer(scrollChat){
+    if(!drawerId) return;
+    var title = document.getElementById("drTitle");
+    var sub = document.getElementById("drSub");
+    var tools = document.getElementById("drTools");
+    var body = document.getElementById("drBody");
+    var input = document.getElementById("chatInput");
+
+    if(drawerId === "__new__"){
+      title.textContent = "Nieuwe kaart";
+      sub.textContent = "Plak een vacature, een link met wat context, of beschrijf bedrijf en rol.";
+      tools.innerHTML = "";
+      input.placeholder = "Plak hier de vacature of beschrijf bedrijf en rol…";
+      document.getElementById("chatSend").textContent = intake ? "Opnieuw voorstellen" : "Voorstel maken";
+      document.getElementById("chatHint").textContent = "Klik op de knop om een voorstel te maken";
+      body.innerHTML = intakeHtml();
+      return;
+    }
+
+    var r = rolesById.get(drawerId);
+    if(!r){ body.innerHTML = '<div class="skeleton">Kaart niet gevonden.</div>'; return; }
+    title.textContent = r.company || drawerId;
+    sub.textContent = r.role || "";
+    input.placeholder = "Nieuws, een update of een vraag over " + (r.company || "dit dossier") + "…";
+    document.getElementById("chatSend").textContent = "Versturen";
+    document.getElementById("chatHint").textContent = "Enter verstuurt · Shift+Enter nieuwe regel";
+
+    var links = [];
+    if(r.briefUrl) links.push('<a class="btn small" href="' + esc(r.briefUrl) + '" target="_blank" rel="noopener">Brief ↗</a>');
+    if(r.vacancyUrl) links.push('<a class="btn small" href="' + esc(r.vacancyUrl) + '" target="_blank" rel="noopener">Vacature ↗</a>');
+    if(r.applyUrl) links.push('<a class="btn small" href="' + esc(r.applyUrl) + '" target="_blank" rel="noopener">Solliciteren ↗</a>');
+    tools.innerHTML = '<button type="button" class="btn small" id="coworkBtn">Verder in Cowork ⧉</button>' + links.join("");
+
+    var s = scoreOf(r);
+    var scoreLine = s ? ('Fit <b>' + s.fit + '</b>' + (s.win != null ? ' · Kans <b>' + s.win + '</b> · Prio <b>' + s.prio + '</b>' : '') +
+      ' <span style="color:var(--ink-faint)">(Sen ' + r.senScore + ' Dom ' + r.domScore + ' Loc ' + r.locScore +
+      ' · Bew ' + r.evScore + ' Niv ' + r.lvlScore + ' Ing ' + r.rteScore + ')</span>') : 'Nog niet gescoord.';
+
+    var cs = contactsFor(r);
+    var contactsHtml = cs.length ? cs.map(function(x){
+      return '<p><b>' + esc(x.c.name) + '</b> · ' + esc(x.c.org || "") + (x.c.lastAction ? ' <span style="color:var(--ink-faint)">· ' + esc(x.c.lastAction) + '</span>' : '') + '</p>';
+    }).join("") : '<p>Geen gekoppelde contacten.</p>';
+
+    var logHtml = logEntries.length ? '<ul class="log-list">' + logEntries.slice(0, 40).map(function(e){
+      if(e.kind === "step") return '<li class="step"><span class="d">' + esc(shortDate(e.at)) + '</span><span><span class="tag">vorige stap</span> ' + esc(e.text) + '</span></li>';
+      return '<li><span class="d">' + esc(shortDate(e.at)) + '</span><span>' + esc(e.text) + '</span></li>';
+    }).join("") + '</ul>' : '<p>Nog geen logregels.</p>';
+
+    var view = chatView.get(drawerId) || [];
+    body.innerHTML =
+      '<div class="dr-sec"><div class="eyebrow"><span>Kaart</span><span class="pill ' + (STAGE_PILL_CLASS[r.stage] || "explore") + '">' + esc(r.pillLabel || r.stage) + '</span></div>' +
+        '<div class="dr-box"><p>' + scoreLine + '</p>' +
+        (r.detail ? '<p>' + esc(r.detail) + '</p>' : '') +
+        (r.nextStep ? '<p><b>Volgende stap' + (r.nextStepDate ? ' (' + esc(r.nextStepWhen || dueLabel(r.nextStepDate)) + ')' : '') + ':</b> ' + esc(r.nextStep) + '</p>' : '') +
+        (r.dateStamp ? '<p style="font-family:Hanken Grotesk, system-ui, sans-serif;font-size:11px;color:var(--ink-faint)">' + esc(r.dateStamp) + '</p>' : '') +
+        '</div></div>' +
+      '<div class="dr-sec"><details data-sec="dossier"' + secAttr("dossier", true) + '><summary class="eyebrow">▸ Dossier</summary>' +
+        '<div class="dr-box dossier-text" style="margin-top:6px">' + (r.dossier ? esc(r.dossier) : 'Nog leeg. Vertel in de chat wat erin moet, of laat het vullen vanuit Cowork.') + '</div></details></div>' +
+      '<div class="dr-sec"><details data-sec="contacts"' + secAttr("contacts", false) + '><summary class="eyebrow">▸ Contacten (' + cs.length + ')</summary><div class="dr-box" style="margin-top:6px">' + contactsHtml + '</div></details></div>' +
+      '<div class="dr-sec"><details data-sec="log"' + secAttr("log", true) + '><summary class="eyebrow">▸ Logboek (' + logEntries.length + ')</summary><div class="dr-box" style="margin-top:6px">' + logHtml + '</div></details></div>' +
+      '<div class="dr-sec"><div class="eyebrow"><span>Chat</span></div><div class="chat" id="chatLog">' +
+        (view.length ? view.join("") : '<div class="msg sys">' + (sampleFn && !sampleDead
+          ? 'Vertel wat er gebeurd is ("interview op 20 okt met de CPO") of stel een vraag ("wat is de volgende stap?"). Claude past de kaart aan en houdt het logboek bij.'
+          : 'De chat is niet beschikbaar in deze weergave. Open de pijplijn in de Claude-app.') + '</div>') +
+      '</div></div>';
+    if(scrollChat) body.scrollTop = body.scrollHeight;
+  }
+
+  var secOpen = {};
+  function secAttr(k, dflt){ var v = (k in secOpen) ? secOpen[k] : dflt; return v ? " open" : ""; }
+  document.getElementById("drBody").addEventListener("toggle", function(ev){
+    var d = ev.target; if(d && d.getAttribute && d.getAttribute("data-sec")) secOpen[d.getAttribute("data-sec")] = d.open;
+  }, true);
+
+  function pushView(id, html){
+    if(!chatView.has(id)) chatView.set(id, []);
+    chatView.get(id).push(html);
+  }
+
+  // ---------- chat ----------
+  function rulesFor(id, r){
+    var cs = contactsFor(r).map(function(x){
+      return { id:x.id, name:x.c.name, org:x.c.org, status:x.c.status, lastAction:x.c.lastAction, lastActionDate:x.c.lastActionDate, type:x.c.type };
+    });
+    var log = logEntries.slice(0, 40).map(function(e){ return e.at + ": " + e.text; });
+    return [
+      "Je bent Claude, ingebed in de Sollicitatiepijplijn van {{FULL_NAME}} ({{CANDIDATE_CONTEXT}}). Je praat met {{FIRST_NAME}} over één kaart. Vandaag is " + today() + ".",
+      "",
+      "WAT JE DOET",
+      "- Nieuws of een update: verwerk het meteen met de tools. Werk stage, pillLabel, dateStamp en het passende datumveld (cvSubmitted, rejectionDate, interviewDates) samen bij, nooit stage alleen. Pas nextStep aan als de volgende stap verandert, en zet dan altijd ook nextStepDate: de dag waarop {{FIRST_NAME}} iets moet doen of opvolgen (bij afwachten: de dag om op te volgen als het stil blijft). nextStepWhen is optioneel en kort ('wo 7 okt 14u30', 'opvolgen als stil'). Geen actie meer (kaart gesloten): nextStepDate leegmaken. Deze datum vult de lijst 'Eerstvolgende acties'. De vervangen stap wordt automatisch als 'vorige stap' in het logboek bewaard; schrijf die dus niet zelf nog eens. Voeg bij elk nieuwtje een logregel toe (add_log) van één of twee zinnen.",
+      "- Duurzame context (contactpersonen, beslissingen, looneis, CV-keuzes, open vragen) hoort in het dossier: gebruik set_dossier met de VOLLEDIGE nieuwe tekst, bestaande inhoud behouden.",
+      "- Gaat het over een contactpersoon uit de lijst hieronder, werk die bij met update_contact (lastAction en lastActionDate altijd samen).",
+      "- Een vraag (volgende stap, wat weten we, voorbereiding): antwoord uit de kaart, het dossier en het logboek. Verzin geen feiten; zeg wat er niet in staat.",
+      "- Stage 'applied' en cvSubmitted pas zetten als {{FIRST_NAME}} bevestigt dat de sollicitatie echt verstuurd is.",
+      "- Scores (gehele getallen 0-5) enkel wijzigen als het nieuws een component echt verschuift (bv. contact reageert: rteScore). Zeg in één regel welke en waarom. Herscoren of nieuwe ladders: verwijs naar Cowork.",
+      "- Werk dat bestanden of internet vraagt (CV, researchbrief, motivatiebrief, mails met bijlagen, opzoekwerk) doe je hier niet: zeg dat {{FIRST_NAME}} de knop 'Verder in Cowork' gebruikt. Een korte mailtekst in je antwoord mag wel.",
+      "- Twijfel je over wat {{FIRST_NAME}} bedoelt, vraag het dan in plaats van iets te schrijven.",
+      "",
+      "VELDEN: stage = interview | applied | explore | declined | rejected | noreply | ruledout. Gebruik rejected enkel bij een expliciet nee, noreply bij stilte of een vacature die dichtging zonder antwoord, declined wanneer {{FIRST_NAME}} een aanbod kreeg en het zelf afwees, en ruledout wanneer {{FIRST_NAME}} passeert voor er een aanbod lag. pillLabel = kort Nederlands label (bv. 'interview 20 okt'). dateStamp = korte voetregel, bestaande tekst aanvullen met ' · ' (bv. 'gesolliciteerd 20 sept · interview 20 okt'). Datums ISO (YYYY-MM-DD). motivationLetter = yes|no|unknown. applicationType = easy_apply|extended|unknown.",
+      "",
+      "STIJL: Nederlands, kort en direct. Veldteksten als compacte zinsfragmenten, zoals de bestaande data. Geen em-dashes. Je antwoord aan {{FIRST_NAME}}: gewone tekst, enkele korte alinea's, geen markdown-koppen. Eindig na een wijziging met één zin over wat je aanpaste.",
+      "",
+      "KAART (id " + id + "):",
+      JSON.stringify(stripMeta(r), null, 1),
+      "",
+      "LOGBOEK (nieuwste eerst):",
+      log.length ? log.join("\n") : "(leeg)",
+      "",
+      "GEKOPPELDE CONTACTEN:",
+      cs.length ? JSON.stringify(cs, null, 1) : "(geen)"
+    ].join("\n");
+  }
+
+  function makeTools(id, record){
+    return [
+      {
+        name:"update_card",
+        description:"Wijzigt velden van deze kaart. Geef enkel de gewijzigde velden in `changes`. Geeft de nieuwe waarden terug.",
+        inputSchema:{ type:"object", properties:{ changes:{ type:"object", description:"veldnaam -> nieuwe waarde" } }, required:["changes"] },
+        execute: async function(input){
+          var r = rolesById.get(id); if(!r) throw new Error("kaart niet gevonden");
+          var ch = cleanChanges(input && input.changes, ROLE_FIELDS);
+          if(record.onStatus) record.onStatus("Kaart bijwerken");
+          var before = {}; Object.keys(ch).forEach(function(k){ before[k] = r[k] == null ? (ROLE_FIELDS[k] === "n" ? 0 : "") : r[k]; });
+          var oldStep = String(r.nextStep || "").trim();
+          if(ch.nextStep != null && String(ch.nextStep).trim() !== oldStep && ch.nextStepWhen == null && r.nextStepWhen){
+            ch.nextStepWhen = ""; before.nextStepWhen = r.nextStepWhen; // oud label hoort bij de oude stap
+          }
+          await store().doc("roles/" + id).update(ch);
+          // Stappenhistorie: de vervangen volgende stap gaat naar het logboek.
+          if(ch.nextStep != null && oldStep && String(ch.nextStep).trim() !== oldStep){
+            var sref = store().collection("roles/" + id + "/log").doc();
+            await sref.set({ at:today(), kind:"step", text:oldStep, due:r.nextStepDate || "", by:"pijplijn-chat", createdAt:new Date().toISOString() });
+            record.push({ kind:"log", id:id, ref:sref, text:"vorige stap bewaard in het logboek" });
+          }
+          await touchMeta();
+          record.push({ kind:"role", id:id, before:before, after:ch });
+          return { ok:true, changed:ch };
+        }
+      },
+      {
+        name:"set_dossier",
+        description:"Vervangt het dossier van deze kaart door `text` (volledige tekst, bestaande inhoud behouden en aanvullen). Gebruik korte kopjes zoals 'Contacten:', 'Beslissingen:', 'Open vragen:'.",
+        inputSchema:{ type:"object", properties:{ text:{ type:"string" } }, required:["text"] },
+        execute: async function(input){
+          var r = rolesById.get(id); if(!r) throw new Error("kaart niet gevonden");
+          var t = String(input && input.text || "").trim(); if(!t) throw new Error("lege tekst");
+          if(record.onStatus) record.onStatus("Dossier bijwerken");
+          await store().doc("roles/" + id).update({ dossier:t });
+          record.push({ kind:"role", id:id, before:{ dossier:r.dossier || "" }, after:{ dossier:"(bijgewerkt)" } });
+          return { ok:true };
+        }
+      },
+      {
+        name:"add_log",
+        description:"Voegt een gedateerde logregel toe aan het logboek van deze kaart. `date` is optioneel (YYYY-MM-DD, standaard vandaag): gebruik de datum waarop het gebeurde.",
+        inputSchema:{ type:"object", properties:{ text:{ type:"string" }, date:{ type:"string" } }, required:["text"] },
+        execute: async function(input){
+          var t = String(input && input.text || "").trim(); if(!t) throw new Error("lege tekst");
+          var d = cleanValue("date", (input && input.date) || today()) || today();
+          if(record.onStatus) record.onStatus("Logboek bijwerken");
+          var ref = store().collection("roles/" + id + "/log").doc();
+          await ref.set({ at:d, text:t, by:"pijplijn-chat", createdAt:new Date().toISOString() });
+          record.push({ kind:"log", id:id, ref:ref, text:t });
+          return { ok:true };
+        }
+      },
+      {
+        name:"update_contact",
+        description:"Wijzigt een gekoppelde contactpersoon (id uit de lijst). Toegestane velden: status, lastAction, lastActionDate, closed, org.",
+        inputSchema:{ type:"object", properties:{ id:{ type:"string" }, changes:{ type:"object" } }, required:["id","changes"] },
+        execute: async function(input){
+          var cid = String(input && input.id || ""); var c = contactsById.get(cid);
+          if(!c) throw new Error("contact " + cid + " bestaat niet");
+          var ch = cleanChanges(input.changes, CONTACT_FIELDS);
+          if(record.onStatus) record.onStatus("Contact bijwerken");
+          var before = {}; Object.keys(ch).forEach(function(k){ before[k] = c[k] == null ? (k === "closed" ? false : "") : c[k]; });
+          await store().doc("contacts/" + cid).update(ch);
+          record.push({ kind:"contact", id:cid, name:c.name, before:before, after:ch });
+          return { ok:true, changed:ch };
+        }
+      }
+    ];
+  }
+
+  var lastMetaTouch = "";
+  async function touchMeta(){
+    var t = today();
+    if(lastMetaTouch === t || (metaDoc && metaDoc.lastCompiled === t)) return;
+    lastMetaTouch = t;
+    try{ await store().doc("meta/board").update({ lastCompiled:t }); }catch(e){}
+  }
+
+  function describeChange(ch){
+    if(ch.kind === "log") return "Logboek: " + ch.text;
+    if(ch.kind === "contact") return "Contact " + ch.name + ": " + Object.keys(ch.after).join(", ");
+    return "Kaart: " + Object.keys(ch.after).map(function(k){
+      var v = ch.after[k]; return k + (typeof v === "string" && v.length > 60 ? "" : " → " + v);
+    }).join(" · ");
+  }
+
+  var undoStore = new Map(); var undoSeq = 0;
+  function changesHtml(record){
+    if(!record.length) return "";
+    var key = "u" + (++undoSeq); undoStore.set(key, record.slice());
+    return '<div class="changes"><span class="ttl">Bijgewerkt</span>' +
+      record.map(function(c){ return '<span>' + esc(describeChange(c)) + '</span>'; }).join("") +
+      '<button type="button" class="btn small" data-undo="' + key + '">Ongedaan maken</button></div>';
+  }
+  async function undo(key, btn){
+    var rec = undoStore.get(key); if(!rec) return;
+    btn.disabled = true; btn.textContent = "Bezig…";
+    try{
+      for(var i = rec.length - 1; i >= 0; i--){
+        var c = rec[i];
+        if(c.kind === "log") await c.ref.delete();
+        else if(c.kind === "contact") await store().doc("contacts/" + c.id).update(c.before);
+        else await store().doc("roles/" + c.id).update(c.before);
+      }
+      undoStore.delete(key);
+      btn.textContent = "Teruggedraaid";
+    }catch(e){ btn.disabled = false; btn.textContent = "Mislukt, opnieuw"; }
+  }
+
+  function errCopy(e){
+    var code = e && e.code;
+    if(code === "not_granted" || code === "sampling_disabled" || code === "not_declared" || code === "capability_disabled" || code === "capability_removed" || code === "tools_unavailable"){
+      sampleDead = true; return "De chat is niet toegestaan of niet beschikbaar in deze weergave.";
+    }
+    if(code === "rate_limited") return "Even te veel vragen of je gebruikslimiet is bereikt. Probeer het straks opnieuw.";
+    if(code === "session_expired") return "Je sessie is verlopen. Meld je opnieuw aan.";
+    if(code === "prompt_too_large") return "Te veel tekst in één keer. Maak het korter.";
+    if(code === "refused") return "Claude weigerde dit verzoek. Formuleer het anders.";
+    if(code === "invalid_json") return "Het voorstel kwam niet in het juiste formaat terug. Probeer opnieuw.";
+    return "Er ging iets mis met de verbinding. Probeer opnieuw.";
+  }
+
+  var tickTimer = null;
+  function jobName(id){
+    if(id === "__new__") return "Nieuwe kaart";
+    var r = rolesById.get(id); return r ? (r.company || id) : id;
+  }
+  function startJob(id){
+    var j = { ctl:new AbortController(), start:Date.now(), name:jobName(id) };
+    jobs.set(id, j);
+    if(!tickTimer) tickTimer = setInterval(tickElapsed, 1000);
+    syncComposer(); renderJobs();
+    return j;
+  }
+  function endJob(id, ok){
+    var j = jobs.get(id); jobs.delete(id);
+    if(!jobs.size && tickTimer){ clearInterval(tickTimer); tickTimer = null; }
+    if(j && drawerId !== id){
+      doneNotes.unshift({ id:id, name:j.name, ok:ok, at:Date.now() });
+      doneNotes = doneNotes.slice(0, 6);
+    }
+    syncComposer(); renderJobs(); render();
+  }
+  function syncComposer(){
+    var on = !!(drawerId && jobs.has(drawerId));
+    document.getElementById("chatSend").disabled = on;
+    document.getElementById("chatStop").hidden = !on;
+  }
+  function tickElapsed(){
+    Array.prototype.forEach.call(document.querySelectorAll("[data-since]"), function(el){
+      el.textContent = Math.round((Date.now() - Number(el.getAttribute("data-since"))) / 1000) + " s";
+    });
+  }
+  function thinkingHtml(label, since){
+    since = since || Date.now();
+    return '<span class="thinking"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>' + esc(label) +
+      ' <span class="elapsed" data-since="' + since + '">' + Math.round((Date.now() - since) / 1000) + ' s</span></span>';
+  }
+  function renderJobs(){
+    var box = document.getElementById("jobTray");
+    var now = Date.now();
+    doneNotes = doneNotes.filter(function(n){ return now - n.at < 60000; });
+    var html = "";
+    jobs.forEach(function(j, id){
+      if(id === drawerId) return;
+      html += '<button type="button" class="job" data-dossier="' + esc(id) + '">' +
+        '<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>' + esc(j.name) +
+        ' <span class="elapsed" data-since="' + j.start + '">' + Math.round((now - j.start) / 1000) + ' s</span></button>';
+    });
+    doneNotes.forEach(function(n){
+      html += '<button type="button" class="job ' + (n.ok ? "ok" : "fail") + '" data-dossier="' + esc(n.id) + '">' +
+        (n.ok ? "✓ " : "! ") + esc(n.name) + (n.ok ? " bijgewerkt" : " mislukt") + '</button>';
+    });
+    box.innerHTML = html;
+    box.hidden = !html;
+  }
+  setInterval(function(){ if(doneNotes.length) renderJobs(); }, 15000);
+
+  async function sendChat(){
+    if(!drawerId || jobs.has(drawerId)) return;
+    var input = document.getElementById("chatInput");
+    var text = input.value.trim();
+    if(!text) return;
+    if(drawerId === "__new__") return runIntake(text);
+    if(!sampleFn || sampleDead){ pushView(drawerId, '<div class="msg sys">De chat is niet beschikbaar in deze weergave.</div>'); renderDrawer(true); return; }
+    var id = drawerId, r = rolesById.get(id); if(!r) return;
+    input.value = "";
+    if(!chats.has(id)) chats.set(id, []);
+    var turns = chats.get(id);
+    turns.push({ role:"user", content:text });
+    while(turns.length > 16) turns.shift();
+    if(turns[0] && turns[0].role !== "user") turns.shift();
+    pushView(id, '<div class="msg me">' + esc(text) + '</div>');
+    var bubbleId = "b" + Date.now();
+    var record = [];
+    var job = startJob(id);
+    pushView(id, '<div class="msg ai" id="' + bubbleId + '">' + thinkingHtml("Denkt na", job.start) + '</div>');
+    renderDrawer(true);
+    var streamed = "";
+    record.onStatus = function(label){
+      var html = (streamed ? esc(streamed) + "\n\n" : "") + thinkingHtml(label, job.start);
+      var vv = chatView.get(id); vv[vv.length-1] = '<div class="msg ai" id="' + bubbleId + '">' + html + '</div>';
+      var el = document.getElementById(bubbleId); if(el) el.innerHTML = html;
+    };
+    var finalText = "", ok = false, failed = false;
+    try{
+      var res = await sampleFn([{ role:"user", content:rulesFor(id, r) }].concat(turns), {
+        cache:false, signal:job.ctl.signal, tools:makeTools(id, record), modelTier:"default",
+        onText:function(u){
+          finalText = u.text; streamed = u.text;
+          var vv = chatView.get(id); vv[vv.length-1] = '<div class="msg ai" id="' + bubbleId + '">' + esc(u.text) + '</div>';
+          var el = document.getElementById(bubbleId); if(el) el.textContent = u.text;
+        }
+      });
+      finalText = res.text;
+      turns.push({ role:"assistant", content:res.text });
+    }catch(e){
+      if(e && e.code === "cancelled") finalText = (e.text || "") + (e.text ? "\n\n" : "") + "(gestopt)";
+      else finalText = (e && e.text ? e.text + "\n\n" : "") + errCopy(e);
+      failed = !(e && e.code === "cancelled") ; turns.pop();
+    }finally{
+      ok = !failed;
+    }
+    var v = chatView.get(id);
+    v[v.length-1] = '<div class="msg ai">' + esc(finalText || "(geen antwoord)") + '</div>' + changesHtml(record);
+    endJob(id, ok);
+    if(drawerId === id) renderDrawer(true);
+  }
+
+  // ---------- nieuwe kaart ----------
+  function intakeHtml(){
+    if(!intake) return '<div class="msg sys">Claude legt eerst per scorecomponent uit hoe hij scoort, en stelt daarna de kaart voor. Je ziet de redenering verschijnen terwijl hij schrijft. Er wordt niets aangemaakt voor je op de knop klikt. Een researchbrief of CV maak je daarna in Cowork.</div>';
+    if(intake.error) return (intake.reasoning ? '<div class="msg ai reasoning">' + esc(intake.reasoning) + '</div>' : '') + '<div class="notice">' + esc(intake.error) + '</div>';
+    if(intake.pending){
+      var label = !intake.reasoning ? (intake.stage || "Scoremodel lezen en nadenken") : (intake.building ? "Kaart opstellen" : "Redeneert");
+      return '<div class="steps">' +
+          '<span class="' + (intake.reasoning ? "done" : "on") + '">1 · Nadenken</span>' +
+          '<span class="' + (intake.reasoning && !intake.building ? "on" : intake.building ? "done" : "") + '">2 · Redenering per score</span>' +
+          '<span class="' + (intake.building ? "on" : "") + '">3 · Kaart opstellen</span>' +
+        '</div>' +
+        (intake.reasoning ? '<div class="msg ai reasoning" id="intakeStream">' + esc(intake.reasoning) + '</div>' : '') +
+        '<div class="msg sys" id="intakeStatus">' + thinkingHtml(label, intake.since) +
+        (!intake.reasoning ? '<br><span style="font-size:11.5px">De eerste woorden duren meestal 10 tot 40 seconden. De eerste keer vraagt de app ook om toestemming.</span>' : '') + '</div>';
+    }
+    var p = intake.card, rs = intake.card.reasoning || {};
+    var exists = rolesById.has(p.id);
+    function row(k, v){ return '<span class="k">' + esc(k) + '</span><span>' + esc(v == null ? "" : v) + '</span>'; }
+    var s = scoreOf(p);
+    return (intake.reasoning ? '<details class="dr-sec"><summary class="eyebrow">▸ Volledige redenering</summary><div class="msg ai reasoning" style="margin-top:6px">' + esc(intake.reasoning) + '</div></details>' : '') +
+      '<div class="dr-box"><div class="preview-grid">' +
+      row("id", p.id) + row("Bedrijf", p.company) + row("Rol", p.role) + row("Fase", p.stage) + row("Pil", p.pillLabel) +
+      row("Detail", p.detail) + row("Volgende stap", (p.nextStepDate ? "(" + p.nextStepDate + ") " : "") + p.nextStep) + row("Vacature", p.vacancyUrl || "") +
+      row("Scores", s ? ("Fit " + s.fit + " · Kans " + s.win + " · Prio " + s.prio) : "") +
+      row("Seniority " + p.senScore, rs.sen) + row("Domein " + p.domScore, rs.dom) + row("Locatie " + p.locScore, rs.loc) +
+      row("Bewijs " + p.evScore, rs.ev) + row("Niveau " + p.lvlScore, rs.lvl) + row("Ingang " + p.rteScore, rs.rte) +
+      row("Dossier", p.dossier || "") +
+      '</div></div>' +
+      (exists ? '<div class="notice">Er bestaat al een kaart met id "' + esc(p.id) + '". <button type="button" class="btn small" data-dossier="' + esc(p.id) + '">Open die kaart</button></div>' : '') +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn primary" id="intakeCreate"' + (exists ? " disabled" : "") + '>Kaart aanmaken</button>' +
+      '<span class="hint" style="font-size:12px;color:var(--ink-faint);align-self:center">Klopt een score niet? Zet je correctie onder de vacature in het tekstvak en vraag opnieuw.</span></div>';
+  }
+
+  function parseCardJson(text){
+    var m = /```(?:json)?\s*([\s\S]*?)```/.exec(text);
+    var raw = m ? m[1] : null;
+    if(!raw){ var a = text.indexOf("{"), b = text.lastIndexOf("}"); if(a !== -1 && b > a) raw = text.slice(a, b + 1); }
+    if(!raw) return null;
+    try{ return JSON.parse(raw); }catch(e){ return null; }
+  }
+
+  async function runIntake(text){
+    if(!sampleFn || sampleDead){ intake = { error:"De chat is niet beschikbaar in deze weergave." }; renderDrawer(); return; }
+    if(jobs.has("__new__")) return;
+    var job = startJob("__new__");
+    intake = { pending:true, reasoning:"", stage:"Scoremodel lezen", since:job.start }; if(drawerId === "__new__") renderDrawer();
+    var model = "";
+    try{
+      var snap = await store().doc("meta/scoring").get();
+      model = snap.exists ? (snap.data().text || "") : "";
+    }catch(e){}
+    intake.stage = "Nadenken over de rol"; if(drawerId === "__new__") renderDrawer();
+    var existing = []; rolesById.forEach(function(r, id){ existing.push(id + " = " + r.company + " · " + r.role); });
+    var prompt = [
+      "Je maakt een nieuwe kaart voor de Sollicitatiepijplijn van {{FULL_NAME}} ({{CANDIDATE_CONTEXT}}). Vandaag is " + today() + ".",
+      "Scoor volgens dit scoremodel (zes componenten, gehele getallen 0-5, geen halve punten; pas de bijzondere regels uit het model toe en zeg het als die spelen; scoor de rol zoals hij vandaag op tafel ligt):",
+      model || "(scoremodel niet gevonden: scoor voorzichtig en meld dat)",
+      "",
+      "Bestaande kaarten (gebruik bij dubbel het bestaande id):", existing.join("\n"),
+      "",
+      "Invoer van {{FIRST_NAME}}:", text,
+      "",
+      "FORMAAT VAN JE ANTWOORD, in deze volgorde:",
+      "1. Eén regel: bedrijf en rol zoals jij ze leest.",
+      "2. Zes regels, één per component, in gewone tekst: 'Seniority 4: …', 'Domein 3: …', 'Locatie 5: …', 'Bewijs 3: …', 'Niveau 4: …', 'Ingang 2: …'. Eén zin per regel. Meld mandaatregel of org-scope-modifier als die spelen.",
+      "3. Eén regel 'Fit X · Kans Y · Prio Z · band B'.",
+      "4. Daarna één ```json codeblok met één object met deze velden: id (kleine letters met koppeltekens, bedrijfsnaam), company, role (functietitel + locatie/hybride), stage ('explore' tenzij {{FIRST_NAME}} iets anders zegt), pillLabel (kort Nederlands), detail (1-3 zinnen Nederlands: wat het bedrijf is, de rol, sterkste punten en gaten; compacte stijl, geen em-dashes), nextStep, nextStepDate (ISO-datum waarop {{FIRST_NAME}} de volgende stap zet; standaard binnen een week), dateStamp (bv. 'op radar " + shortDate(today()) + "'), dateOnRadar ('" + today() + "'), vacancyUrl (of ''), applyUrl (of ''), senScore, domScore, locScore, evScore, lvlScore, rteScore, reasoning (object met sen, dom, loc, ev, lvl, rte: dezelfde zinnen als hierboven), dossier (korte tekst met kopjes 'Bron:', 'Open vragen:').",
+      "Geen markdown-koppen, geen em-dashes, Nederlands."
+    ].join("\n");
+    var full = "", ok = false;
+    function visible(t){ var i = t.indexOf("```"); return (i === -1 ? t : t.slice(0, i)).trim(); }
+    try{
+      var res = await sampleFn(prompt, {
+        signal:job.ctl.signal, modelTier:"default", cache:false,
+        onText:function(u){
+          full = u.text;
+          intake.reasoning = visible(u.text);
+          var building = u.text.indexOf("```") !== -1;
+          var changedPhase = building !== !!intake.building;
+          intake.building = building;
+          if(drawerId !== "__new__") return;
+          var el = document.getElementById("intakeStream");
+          if(el && !changedPhase){ el.textContent = intake.reasoning; }
+          else renderDrawer();
+          var body = document.getElementById("drBody"); body.scrollTop = body.scrollHeight;
+        }
+      });
+      full = res.text;
+      var card = parseCardJson(full);
+      if(!card || typeof card !== "object" || !card.company) throw { code:"invalid_json" };
+      card.id = String(card.id || card.company).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "nieuwe-kaart";
+      ["senScore","domScore","locScore","evScore","lvlScore","rteScore"].forEach(function(k){
+        var n = Math.round(Number(card[k])); card[k] = (n >= 0 && n <= 5) ? n : 0;
+      });
+      if(ENUMS.stage.indexOf(card.stage) === -1) card.stage = "explore";
+      intake = { card:card, reasoning:visible(full) }; ok = true;
+    }catch(e){
+      intake = (e && e.code === "cancelled") ? (full ? { error:"Gestopt.", reasoning:visible(full) } : null) : { error:errCopy(e), reasoning:visible(full) };
+    }finally{
+      endJob("__new__", ok);
+    }
+    if(drawerId === "__new__") renderDrawer();
+  }
+
+  async function createFromIntake(btn){
+    if(!intake || !intake.card) return;
+    var p = intake.card;
+    if(rolesById.has(p.id)) return;
+    btn.disabled = true; btn.textContent = "Bezig…";
+    var maxOrder = 0;
+    rolesById.forEach(function(r){ if(r.stage === p.stage && (r.order||0) > maxOrder) maxOrder = r.order || 0; });
+    var doc = {
+      company:String(p.company||""), role:String(p.role||""), stage:p.stage, pillLabel:String(p.pillLabel||"op radar"),
+      detail:String(p.detail||""), nextStep:String(p.nextStep||""), dateStamp:String(p.dateStamp||""),
+      nextStepDate:/^\d{4}-\d{2}-\d{2}$/.test(p.nextStepDate||"") ? p.nextStepDate : "",
+      dateOnRadar:/^\d{4}-\d{2}-\d{2}$/.test(p.dateOnRadar||"") ? p.dateOnRadar : today(),
+      cvSubmitted:"", rejectionDate:"", interviewDates:"", motivationLetter:"unknown", applicationType:"unknown",
+      vacancyUrl:String(p.vacancyUrl||""), applyUrl:String(p.applyUrl||""), order:maxOrder + 1,
+      senScore:p.senScore, domScore:p.domScore, locScore:p.locScore, evScore:p.evScore, lvlScore:p.lvlScore, rteScore:p.rteScore,
+      dossier:String(p.dossier||"")
+    };
+    try{
+      await store().doc("roles/" + p.id).set(doc);
+      var rs = p.reasoning || {};
+      await store().collection("roles/" + p.id + "/log").doc().set({
+        at:today(), by:"pijplijn-chat", createdAt:new Date().toISOString(),
+        text:"Kaart aangemaakt via de pijplijn. Scores: " + [["Sen","senScore","sen"],["Dom","domScore","dom"],["Loc","locScore","loc"],["Bew","evScore","ev"],["Niv","lvlScore","lvl"],["Ing","rteScore","rte"]].map(function(x){
+          return x[0] + " " + p[x[1]] + (rs[x[2]] ? " (" + rs[x[2]] + ")" : "");
+        }).join(", ") + "."
+      });
+      await touchMeta();
+      intake = null;
+      document.getElementById("chatInput").value = "";
+      var newId = p.id;
+      setTimeout(function(){ openDrawer(newId); }, 300);
+    }catch(e){
+      btn.disabled = false; btn.textContent = "Mislukt, opnieuw";
+    }
+  }
+
+  // ---------- events ----------
+  document.addEventListener("click", function(ev){
+    var o = ev.target.closest("[data-dossier]");
+    if(o){ ev.preventDefault(); openDrawer(o.getAttribute("data-dossier")); return; }
+    var u = ev.target.closest("[data-undo]");
+    if(u){ undo(u.getAttribute("data-undo"), u); return; }
+    if(ev.target.closest("#intakeCreate")){ createFromIntake(ev.target.closest("#intakeCreate")); return; }
+    if(ev.target.closest("#coworkBtn")){
+      var r = rolesById.get(drawerId); if(!r) return;
+      var txt = coworkPrompt(drawerId, r);
+      var b = ev.target.closest("#coworkBtn");
+      function fallback(){
+        var tools = document.getElementById("drTools");
+        if(!document.getElementById("copyBox")){
+          tools.insertAdjacentHTML("beforeend", '<textarea class="copy-box" id="copyBox" rows="3" readonly></textarea>');
+        }
+        var box = document.getElementById("copyBox"); box.value = txt; box.focus(); box.select();
+        b.textContent = "Kopieer de tekst hieronder";
+      }
+      try{
+        navigator.clipboard.writeText(txt).then(function(){ b.textContent = "Gekopieerd: plak in een nieuwe Cowork-taak"; }, fallback);
+      }catch(e){ fallback(); }
+    }
+  });
+  document.getElementById("newCardBtn").addEventListener("click", function(){ openDrawer("__new__"); });
+  document.getElementById("drClose").addEventListener("click", closeDrawer);
+  document.getElementById("scrim").addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", function(ev){ if(ev.key === "Escape" && drawerId) closeDrawer(); });
+  document.getElementById("chatSend").addEventListener("click", sendChat);
+  document.getElementById("chatStop").addEventListener("click", function(){ var j = drawerId && jobs.get(drawerId); if(j) j.ctl.abort(); });
+  document.getElementById("chatInput").addEventListener("keydown", function(ev){
+    if(ev.key === "Enter" && !ev.shiftKey && drawerId !== "__new__"){ ev.preventDefault(); sendChat(); }
+  });
+
+  claude.use("sample").then(function(s){ sampleFn = s; if(drawerId) renderDrawer(); });
+
+  applyDemoUI();
+  applyDataset();
+  render();
+
+  claude.use("db").then(function(db){
+    if(!db){ document.getElementById("dbWarning").hidden = false; return; }
+    dbRef = db;
+
+    db.doc("meta/board").onSnapshot(function(snap){
+      liveMeta = snap.exists ? snap.data() : null;
+      applyDataset();
+      render();
+    }, function(){ document.getElementById("dbWarning").hidden = false; });
+
+    db.collection("roles").onSnapshot(function(qs){
+      liveRoles.clear();
+      qs.docs.forEach(function(d){
+        var data = d.data();
+        if(data){ data.__id = d.id; liveRoles.set(d.id, data); }
+      });
+      applyDataset();
+      render();
+      if(drawerId && drawerId !== "__new__") renderDrawer();
+    }, function(){ document.getElementById("dbWarning").hidden = false; });
+
+    db.collection("contacts").onSnapshot(function(qs){
+      liveContacts.clear();
+      qs.docs.forEach(function(d){
+        var data = d.data();
+        if(data){ data.__id = d.id; liveContacts.set(d.id, data); }
+      });
+      applyDataset();
+      render();
+      if(drawerId && drawerId !== "__new__") renderDrawer();
+    }, function(){ document.getElementById("dbWarning").hidden = false; });
+
+    db.doc("meta/setup").onSnapshot(function(snap){
+      liveSetup = snap.exists ? snap.data() : null; renderSetup();
+    }, function(){});
+    db.collection("questions").onSnapshot(function(qs){
+      liveQuestions.clear();
+      qs.docs.forEach(function(d){ var v = d.data(); if(v) liveQuestions.set(d.id, v); });
+      renderSetup();
+    }, function(){});
+    db.collection("updates").onSnapshot(function(qs){
+      liveUpdates.clear();
+      qs.docs.forEach(function(d){ var v = d.data(); if(v) liveUpdates.set(d.id, v); });
+      renderSetup();
+    }, function(){});
+  });
+
+  // =======================================================================
+  // Opzet: setup-dashboard
+  // meta/setup   { steps:[{id, phase, label, status, note, prompt}],
+  //                requirements:[{label, status, fix, checkedAt}],
+  //                links:[{label, url, note}], pluginVersion }
+  // questions/*  { question, why, source, status: open|answered|processed,
+  //                answer, askedAt, answeredAt, processedAt, order }
+  // updates/*    { at, text, kind }
+  // De pagina schrijft enkel antwoorden. Claude verwerkt ze in de narrative.
+  // =======================================================================
+  var liveSetup = null, liveQuestions = new Map(), liveUpdates = new Map();
+  var page = pref("pijplijn.page", "pipe");
+  var drafts = {};
+
+  var DEMO_SETUP = {
+    pluginVersion:"0.4.0",
+    steps:[
+      { id:"qs-cv", phase:"quickstart", label:"CV opladen", status:"done", note:"Oud CV en LinkedIn-export gelezen." },
+      { id:"qs-narrative", phase:"quickstart", label:"Eerste versie van je verhaal", status:"done", note:"Opgebouwd uit het CV; aangevuld via de vragen hieronder." },
+      { id:"qs-cv-base", phase:"quickstart", label:"Generiek CV gerenderd", status:"done", note:"Eén variant, alle regels nog ⏳." },
+      { id:"qs-first", phase:"quickstart", label:"Eerste vacature analyseren", status:"active", note:"Plak een vacature in een nieuwe chat.", prompt:"Analyseer deze vacature voor mij: <plak hier de vacature of de link>" },
+      { id:"dp-variants", phase:"deepen", label:"Doelrollen en CV-varianten", status:"todo", prompt:"Laten we mijn doelrollen en CV-varianten vastleggen." },
+      { id:"dp-rules", phase:"deepen", label:"Standing rules", status:"todo", prompt:"Help me mijn standing rules opstellen: wat mag ik wel en niet claimen?" },
+      { id:"dp-criteria", phase:"deepen", label:"Zoekcriteria en LinkedIn-alerts", status:"todo", prompt:"Laten we mijn zoekcriteria en LinkedIn-alerts opzetten." },
+      { id:"dp-scoring", phase:"deepen", label:"Scoremodel", status:"todo", prompt:"Stel samen met mij mijn scoremodel op." },
+      { id:"op-screening", phase:"optional", label:"Dagelijkse LinkedIn-screening", status:"todo", prompt:"Zet de dagelijkse LinkedIn-screening op." },
+      { id:"op-style", phase:"optional", label:"CV in je eigen huisstijl", status:"todo", prompt:"Breng mijn CV in lijn met mijn huisstijl." }
+    ],
+    requirements:[
+      { label:"Claude desktop-app met je map gekoppeld", status:"ok", checkedAt:"2026-11-18" },
+      { label:"Browser met LinkedIn ingelogd", status:"missing", fix:"Installeer Claude in Chrome en log in op LinkedIn in Chrome.", checkedAt:"2026-11-18" },
+      { label:"Geplande taken", status:"unknown", fix:"Wordt gecontroleerd bij het opzetten van de screening." }
+    ],
+    links:[
+      { label:"Generiek CV (PDF)", url:"#", note:"00 Sources/Generic CV" },
+      { label:"Handleiding (README)", url:"#", note:"Hoe de vier fases werken" }
+    ]
+  };
+  var DEMO_QUESTIONS = new Map([
+    ["q1", { question:"Hoe groot was je team bij Fictief BV, en rapporteerde je aan de CEO?", why:"Bepaalt of de headline 'Head of' of 'Director' mag zeggen, en verbetert de contextregel van die rol.", source:"quick start", status:"open", order:1, askedAt:"2026-11-18" }],
+    ["q2", { question:"Welk meetbaar resultaat hoort bij de migratie naar het nieuwe platform?", why:"Die bullet heeft nu geen cijfer; met een resultaat wordt hij een van je sterkste regels.", source:"vacature Voorbeeld NV", status:"open", order:2, askedAt:"2026-11-18" }],
+    ["q3", { question:"Heb je ooit een budget beheerd? Hoe groot?", why:"Gevraagd in twee recente vacatures.", source:"vacature Demo SA", status:"answered", answer:"Ja, het productbudget van 1,2 M€ per jaar, sinds 2023.", order:3, askedAt:"2026-11-17", answeredAt:"2026-11-18" }]
+  ]);
+  var DEMO_UPDATES = new Map([
+    ["u1", { at:"2026-11-18", text:"Generiek CV opnieuw gerenderd na drie nieuwe antwoorden.", kind:"source" }],
+    ["u2", { at:"2026-11-17", text:"Plugin bijgewerkt naar 0.4.0: setup-dashboard en vragen.", kind:"plugin" }]
+  ]);
+
+  function setupData(){ return demoMode ? DEMO_SETUP : liveSetup; }
+  function questionsMap(){ return demoMode ? DEMO_QUESTIONS : liveQuestions; }
+  function updatesMap(){ return demoMode ? DEMO_UPDATES : liveUpdates; }
+
+  function applyPage(){
+    document.querySelectorAll(".page-switch [data-page]").forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-page") === page ? "true" : "false");
+    });
+    var setup = page === "setup";
+    document.querySelectorAll(".pipe-only").forEach(function(el){ el.classList.toggle("su-off", setup); el.style.display = setup ? "none" : ""; });
+    document.getElementById("setupSection").hidden = !setup;
+    document.getElementById("newCardBtn").style.display = setup ? "none" : "";
+  }
+
+  function sortedQuestions(){
+    var list = [];
+    questionsMap().forEach(function(q, id){ list.push({ id:id, q:q }); });
+    list.sort(function(a, b){ return (a.q.order || 0) - (b.q.order || 0) || String(a.q.askedAt || "").localeCompare(String(b.q.askedAt || "")); });
+    return list;
+  }
+
+  var PHASES = [["quickstart", "Quick start", "eerste resultaat in een kwartier"], ["deepen", "Verdieping", "op je eigen tempo"], ["optional", "Optioneel", ""]];
+
+  function renderSetup(){
+    var sec = document.getElementById("setupSection");
+    if(!sec || !liveQuestions) return;   // render() runs once before this module is initialised
+    var qs = sortedQuestions();
+    var open = qs.filter(function(x){ return (x.q.status || "open") === "open"; });
+    var badge = document.getElementById("setupBadge");
+    badge.hidden = !open.length; badge.textContent = open.length;
+    applyPage();
+    if(page !== "setup") return;
+
+    var d = setupData();
+    var h = '<div class="sect-head"><div><h2>Opzet</h2><p class="intro">Waar je systeem staat: wat klaar is, wat nog open staat, en vragen om je verhaal gaandeweg aan te vullen.</p></div></div>';
+    if(!d){
+      h += '<div class="su-empty">Nog geen opzetgegevens op deze pagina. Vraag Claude in een nieuwe taak: <b>"zet het opzet-dashboard van mijn career search op"</b>.</div>';
+    }else{
+      var steps = d.steps || [];
+      var core = steps.filter(function(x){ return x.phase !== "optional"; });
+      var done = core.filter(function(x){ return x.status === "done"; }).length;
+      var pct = core.length ? Math.round(done / core.length * 100) : 0;
+      h += '<div class="su-progress"><div class="top"><div><span class="big">' + done + '/' + core.length + '</span> <span class="of">stappen klaar, zonder de optionele</span></div>' +
+        (d.pluginVersion ? '<span class="of">career-search ' + esc(d.pluginVersion) + '</span>' : '') + '</div>' +
+        '<div class="su-bar"><i style="width:' + pct + '%"></i></div></div>';
+
+      h += '<div class="su-grid"><div class="su-card"><h3>Takenlijst</h3><div class="sub">Kopieer de opdracht en plak ze in een nieuwe taak bij Claude.</div>';
+      PHASES.forEach(function(ph){
+        var list = steps.filter(function(x){ return (x.phase || "deepen") === ph[0]; });
+        if(!list.length) return;
+        var n = list.filter(function(x){ return x.status === "done"; }).length;
+        h += '<div class="su-phase">' + esc(ph[1]) + (ph[2] ? ' <span>' + esc(ph[2]) + ' · ' + n + '/' + list.length + '</span>' : ' <span>' + n + '/' + list.length + '</span>') + '</div><ul class="su-steps">';
+        list.forEach(function(st){
+          var cls = st.status === "done" ? "done" : (st.status === "active" ? "active" : "");
+          if(ph[0] === "optional" && st.status !== "done") cls += " optional";
+          h += '<li class="su-step ' + cls + '"><span class="su-ic">' + (st.status === "done" ? "✓" : "") + '</span>' +
+            '<span class="lbl">' + esc(st.label) + '</span>' +
+            (st.prompt && st.status !== "done" ? '<button type="button" class="btn small" data-su-copy="' + esc(st.id) + '">Kopieer opdracht</button>' : '<span></span>') +
+            (st.note ? '<span class="note">' + esc(st.note) + '</span>' : '') +
+            '<span class="note" id="copyslot-' + esc(st.id) + '"></span></li>';
+        });
+        h += '</ul>';
+      });
+      h += '</div><div style="display:flex;flex-direction:column;gap:20px">';
+
+      var reqs = d.requirements || [];
+      if(reqs.length){
+        h += '<div class="su-card"><h3>Vereisten</h3>';
+        reqs.forEach(function(r){
+          var st = r.status === "ok" ? ["ok", "OK"] : (r.status === "missing" ? ["missing", "Ontbreekt"] : ["unknown", "Onbekend"]);
+          h += '<div class="su-req"><span class="st ' + st[0] + '">' + st[1] + '</span><span>' + esc(r.label) +
+            (r.fix && r.status !== "ok" ? '<span class="fix">' + esc(r.fix) + '</span>' : '') +
+            (r.checkedAt ? '<span class="fix">Gecontroleerd ' + esc(r.checkedAt) + '</span>' : '') + '</span></div>';
+        });
+        h += '</div>';
+      }
+      var links = d.links || [];
+      if(links.length){
+        h += '<div class="su-card"><h3>Links</h3><ul class="su-links">';
+        links.forEach(function(l){
+          var safe = /^https?:\/\//.test(l.url || "") ? l.url : null;
+          h += '<li>' + (safe ? '<a href="' + esc(safe) + '" target="_blank" rel="noopener">' + esc(l.label) + '</a>' : '<b>' + esc(l.label) + '</b>') +
+            (l.note ? '<span class="d">' + esc(l.note) + '</span>' : '') + '</li>';
+        });
+        h += '</ul></div>';
+      }
+      var ups = [];
+      updatesMap().forEach(function(u){ ups.push(u); });
+      ups.sort(function(a, b){ return String(b.at || "").localeCompare(String(a.at || "")); });
+      if(ups.length){
+        h += '<div class="su-card"><h3>Updates</h3><ul class="su-upd">';
+        ups.slice(0, 8).forEach(function(u){ h += '<li><span class="at">' + esc(u.at || "") + '</span>' + esc(u.text || "") + '</li>'; });
+        h += '</ul></div>';
+      }
+      h += '</div></div>';
+    }
+
+    var answered = qs.filter(function(x){ return x.q.status === "answered"; });
+    var processed = qs.filter(function(x){ return x.q.status === "processed"; });
+    h += '<div class="sect-head"><div><h2>Vragen over je verhaal</h2><p class="intro">Claude zet hier vragen wanneer je CV of je verhaal een gat heeft. Antwoord wanneer het je uitkomt; bij je volgende taak verwerkt Claude de antwoorden in je narrative.</p></div></div>';
+    h += '<div class="su-qs">';
+    if(!open.length && !answered.length) h += '<div class="su-empty">Geen open vragen.' + (processed.length ? ' ' + processed.length + ' eerdere antwoorden zijn al verwerkt.' : '') + '</div>';
+    open.forEach(function(x){
+      h += '<div class="su-q" data-qid="' + esc(x.id) + '"><div class="q">' + esc(x.q.question) + '</div>' +
+        (x.q.why ? '<div class="why">' + esc(x.q.why) + '</div>' : '') +
+        '<textarea data-su-answer="' + esc(x.id) + '" placeholder="Jouw antwoord, in je eigen woorden. Cijfers en voorbeelden helpen het meest.">' + esc(drafts[x.id] || "") + '</textarea>' +
+        '<div class="row"><span class="src">' + (x.q.source ? "Uit: " + esc(x.q.source) : "") + (x.q.askedAt ? " · " + esc(x.q.askedAt) : "") + '</span>' +
+        '<span style="display:flex;gap:6px"><button type="button" class="btn small" data-su-skip="' + esc(x.id) + '">Niet van toepassing</button>' +
+        '<button type="button" class="btn primary small" data-su-save="' + esc(x.id) + '">Bewaar antwoord</button></span></div></div>';
+    });
+    answered.forEach(function(x){
+      h += '<div class="su-q answered"><div class="q">' + esc(x.q.question) + '</div><div class="ans">' + esc(x.q.answer || "") + '</div>' +
+        '<div class="row"><span class="wait">Wacht op verwerking door Claude</span><span class="src">' + (x.q.answeredAt ? "Beantwoord " + esc(x.q.answeredAt) : "") + '</span></div></div>';
+    });
+    h += '</div>';
+    if(processed.length && (open.length || answered.length)) h += '<p class="intro">' + processed.length + ' eerdere antwoorden zijn al verwerkt in je narrative.</p>';
+    sec.innerHTML = h;
+  }
+
+  async function saveAnswer(id, skip){
+    var ta = document.querySelector('[data-su-answer="' + id + '"]');
+    var text = skip ? "(niet van toepassing)" : (ta ? ta.value.trim() : "");
+    if(!text) { if(ta) ta.focus(); return; }
+    var ch = { answer:text, status:"answered", answeredAt:today() };
+    if(demoMode){
+      var q = DEMO_QUESTIONS.get(id); if(q) Object.keys(ch).forEach(function(k){ q[k] = ch[k]; });
+      delete drafts[id]; renderSetup(); return;
+    }
+    if(!dbRef) return;
+    try{ await dbRef.doc("questions/" + id).update(ch); delete drafts[id]; }
+    catch(e){ document.getElementById("dbWarning").hidden = false; }
+  }
+
+  document.addEventListener("input", function(ev){
+    var id = ev.target.getAttribute && ev.target.getAttribute("data-su-answer");
+    if(id) drafts[id] = ev.target.value;
+  });
+  document.addEventListener("click", function(ev){
+    var p = ev.target.closest(".page-switch [data-page]");
+    if(p){ page = p.getAttribute("data-page"); savePref("pijplijn.page", page); renderSetup(); applyPage(); return; }
+    var sv = ev.target.closest("[data-su-save]");
+    if(sv){ saveAnswer(sv.getAttribute("data-su-save"), false); return; }
+    var sk = ev.target.closest("[data-su-skip]");
+    if(sk){ saveAnswer(sk.getAttribute("data-su-skip"), true); return; }
+    var cp = ev.target.closest("[data-su-copy]");
+    if(cp){
+      var sid = cp.getAttribute("data-su-copy");
+      var st = ((setupData() || {}).steps || []).filter(function(x){ return x.id === sid; })[0];
+      if(!st) return;
+      var slot = document.getElementById("copyslot-" + sid);
+      function fallback(){ if(slot){ slot.innerHTML = '<textarea class="su-copy" rows="2" readonly>' + esc(st.prompt) + '</textarea>'; var t = slot.querySelector("textarea"); t.focus(); t.select(); } cp.textContent = "Kopieer hieronder"; }
+      try{ navigator.clipboard.writeText(st.prompt).then(function(){ cp.textContent = "Gekopieerd"; }, fallback); }catch(e){ fallback(); }
+    }
+  });
+
+  renderSetup();
+})();
+</script>
+
+
+
+
+
+</body></html>
