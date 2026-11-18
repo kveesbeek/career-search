@@ -1,111 +1,84 @@
 <!DOCTYPE html><html lang="{{ lang }}"><head><meta charset="UTF-8"><title>{{ name }} — {{ doc_title }}</title><style>{{ fonts_css }}
+/* Default CV design of the career-search plugin: a classic, text-first single
+   column. Colours, font and label style come from `cv.design` in profile.yaml
+   (see render_cv.py, DEFAULT_DESIGN). One column, real text, no tables, no
+   icons: everything an ATS needs to read it top to bottom. */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-@page{size:A4;margin:{{ page.top }}mm {{ page.side }}mm {{ page.bottom }}mm {{ page.left }}mm}
+@page{size:A4;margin:{{ page.top }}mm {{ page.side }}mm {{ page.bottom }}mm {{ page.side }}mm}
 html,body{background:#fff;-webkit-font-smoothing:antialiased}
 .page{max-width:820px;margin:0 auto;padding:40px 48px}
-/* 6px left padding keeps the timeline dot (left:-5px) inside the printable area */
-@media print{.page{padding:0 0 0 6px;max-width:100%}}
-.header-top{display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
-.contact{text-align:right}
-.tags{display:flex;flex-wrap:wrap}
-.company-head,.role-top{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
-.dates{white-space:nowrap}
-.role{position:relative}
-.role-start{break-inside:avoid}
-.bullets{list-style:none}
-.bullets li{position:relative;break-inside:avoid}
-.section{margin-bottom:11px}
-.section.keep{break-inside:avoid}
+@media print{.page{padding:0;max-width:100%}}
+:root{--s:{{ page.scale }}px;--ink:{{ d.ink }};--body:{{ d.body }};--muted:{{ d.muted }};--rule:{{ d.rule }};--accent:{{ d.accent }}}
+html,body{font-family:{{ d.font_stack|safe }};font-size:var(--s);line-height:1.45;color:var(--body)}
 
-/* --s is the single type scale: change it and the whole CV scales with it. */
-:root{--s:{{ page.scale }}px;--ink:{{ d.ink }};--body:{{ d.body }};--muted:{{ d.muted }};--rule:{{ d.rule }};--accent:{{ d.accent }};--accent-soft:{{ d.accent_wash }};--accent-soft-rule:{{ d.accent_wash_rule }}}
-html,body{font-family:{{ d.font_stack|safe }};font-size:var(--s);line-height:1.5;color:var(--body)}
-h1{font-size:calc(var(--s)*2.55);font-weight:{{ d.name_weight }};letter-spacing:{{ d.name_tracking }};color:var(--ink);line-height:1.1}
-.contact{font-size:calc(var(--s)*.913);color:var(--muted);line-height:1.6}
-.title-line{font-size:calc(var(--s)*1.13);font-weight:500;color:var(--accent);margin:6px 0 13px}
-.positioning{font-size:calc(var(--s)*1.043);line-height:1.6;color:var(--body);max-width:none}
-hr{border:none;border-top:1px solid var(--rule);margin:11px 0}
-/* ATS: little letter-spacing, so parsers read "EXPERIENCE" and not "E XPE R I E N CE" */
-.section-label{font-size:calc(var(--s)*{{ d.label_size }});font-weight:{{ d.label_weight }};letter-spacing:{{ d.label_tracking }};text-transform:{{ d.label_case }};color:{{ d.label_color }};margin-bottom:7px}
-{% if d.label_rule %}.section-label::before{content:"";display:inline-block;width:{{ d.label_rule_width }};height:2px;background:var(--accent);vertical-align:middle;margin:0 8px 2px 0}{% endif %}
-.tags{gap:6px}
-.tag{font-size:calc(var(--s)*.913);font-weight:500;color:var(--body);border:1px solid var(--rule);border-radius:{{ d.tag_radius }};padding:3px 10px}
-.tag.blue{color:var(--accent);border-color:var(--accent-soft-rule);background:var(--accent-soft);font-weight:600}
-.company-block{margin-bottom:10px}
-.company{font-size:calc(var(--s)*1.043);font-weight:700;color:var(--ink)}
-.company-head .dates{font-size:calc(var(--s)*.913);font-weight:600;color:var(--ink)}
-.company-note{font-size:calc(var(--s)*.913);color:var(--muted);margin:2px 0 9px}
-.role{padding-left:14px;border-left:2px solid var(--rule);margin-bottom:10px}
-.role::before{content:"";position:absolute;left:-5px;top:5px;width:8px;height:8px;border-radius:50%;background:#fff;border:2px solid var(--accent)}
-.role-title{font-size:calc(var(--s)*1.174);font-weight:600;color:var(--ink);letter-spacing:-.2px}
-.role .dates{font-size:calc(var(--s)*.913);color:var(--muted)}
-.context{font-size:calc(var(--s)*.957);color:var(--muted);margin:1px 0 5px}
-.stack{font-size:calc(var(--s)*.913);color:var(--muted);margin-top:4px}
-.bullets li{font-size:var(--s);padding-left:13px;margin-bottom:3px}
-.bullets li::before{content:"";position:absolute;left:1px;top:7.5px;width:4px;height:4px;border-radius:50%;background:var(--accent)}
+/* Header: centred name, headline and one contact line */
+.header{text-align:center}
+h1{font-size:calc(var(--s)*2.35);font-weight:{{ d.name_weight }};letter-spacing:{{ d.name_tracking }};color:var(--ink);line-height:1.1}
+.headline{font-size:calc(var(--s)*1.1);font-weight:600;color:var(--accent);margin-top:4px}
+.contact{font-size:calc(var(--s)*.93);color:var(--muted);margin-top:5px}
+.contact span+span::before{content:"·";margin:0 7px;color:var(--muted)}
+.profile{margin-top:12px;text-align:left;line-height:1.5}
+
+/* Sections: label with a full-width hairline underneath */
+.section{margin-top:13px}
+.section.keep{break-inside:avoid}
+.section-label{font-size:calc(var(--s)*{{ d.label_size }});font-weight:{{ d.label_weight }};letter-spacing:{{ d.label_tracking }};text-transform:{{ d.label_case }};color:{{ d.label_color }};padding-bottom:3px;border-bottom:1px solid var(--rule);margin-bottom:7px}
+.inline{line-height:1.6}
+.inline .sep{color:var(--muted);margin:0 6px}
+.inline b{font-weight:600;color:var(--ink)}
+
+/* Experience */
+.company-block{margin-bottom:9px}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:16px}
+.company{font-weight:700;color:var(--ink);font-size:calc(var(--s)*1.04)}
+.dates{white-space:nowrap;font-size:calc(var(--s)*.93);color:var(--muted);font-variant-numeric:tabular-nums}
+.company-note{font-size:calc(var(--s)*.93);color:var(--muted);font-style:italic;margin:1px 0 4px}
+.role{margin-top:5px}
+.role-start{break-inside:avoid}
+.role-title{font-weight:600;color:var(--ink);font-style:italic}
+.context{font-size:calc(var(--s)*.95);color:var(--muted);margin:1px 0 3px}
+.stack{font-size:calc(var(--s)*.93);color:var(--muted);margin-top:3px}
+.bullets{list-style:disc;padding-left:16px}
+.bullets li{margin-bottom:2px;break-inside:avoid}
+.bullets li::marker{color:var(--accent)}
 .bullets li strong{color:var(--ink);font-weight:600}
-/* Education and the closing blocks are full width and read top to bottom, so an
-   ATS parser never merges two neighbouring columns into one line. */
-.edu-group{margin-bottom:7px}
-.edu-group:last-child{margin-bottom:0}
-.edu-sub{font-size:calc(var(--s)*.8);font-weight:700;letter-spacing:{{ d.sub_tracking }};text-transform:{{ d.label_case }};color:var(--accent);margin-bottom:2px}
-.edu-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;font-size:var(--s);margin-bottom:1px}
+
+/* Education, languages, tools: one record per line for clean extraction */
+.edu-sub{font-size:calc(var(--s)*.9);font-weight:700;color:var(--ink);margin:4px 0 1px}
+.edu-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:1px}
 .edu-degree{font-weight:600;color:var(--ink)}
 .edu-meta{color:var(--muted)}
-.edu-year{white-space:nowrap;font-size:calc(var(--s)*.913);color:var(--muted)}
-.lang-row{display:flex;flex-wrap:wrap;gap:4px 22px;font-size:var(--s)}
-.lang-name{font-weight:600;color:var(--ink)}
-.lang-level{color:var(--muted)}
-.edu-note{font-size:calc(var(--s)*.913);color:var(--body);margin-top:8px}
-.linear{font-size:calc(var(--s)*.957);line-height:1.6;color:var(--body)}
+.edu-note{font-size:calc(var(--s)*.95);margin-top:5px}
 </style></head>
 <body>
 <div class="page">
 
   <header class="header">
-    <div class="header-top">
-      <h1>{{ name }}</h1>
-      <div class="contact">
-        {{ email }} · {{ phone_loc.split(' · ')[0] }}<br>
-        {{ linkedin }} · {{ phone_loc.split(' · ')[1:] | join(' · ') }}
-      </div>
+    <h1>{{ name }}</h1>
+    <div class="headline">{{ headline }}</div>
+    <div class="contact">
+      <span>{{ email }}</span>{% for part in phone_loc.split(' · ') %}<span>{{ part }}</span>{% endfor %}<span>{{ linkedin }}</span>
     </div>
-    <div class="title-line">{{ headline }}</div>
-    <p class="positioning">{{ profile }}</p>
+    <p class="profile">{{ profile }}</p>
   </header>
-
-  <hr>
 
   <div class="section">
     <div class="section-label">{{ labels.TAG }}</div>
-    <div class="tags">
-      {% for t in tags %}<span class="tag{% if loop.index <= highlight_tags %} blue{% endif %}">{{ t }}</span>
-      {% endfor %}
-    </div>
+    <div class="inline">{% for t in tags %}{% if not loop.first %}<span class="sep">·</span>{% endif %}{% if loop.index <= highlight_tags %}<b>{{ t }}</b>{% else %}{{ t }}{% endif %}{% endfor %}</div>
   </div>
-
-  <hr>
 
   <div class="section">
     <div class="section-label">{{ labels.EXP }}</div>
     {% for c in companies %}
     <div class="company-block">
-      <div class="company-head">
-        <div class="company">{{ c.name }}</div>
-        <div class="dates">{{ c.dates }}</div>
-      </div>
+      <div class="row"><div class="company">{{ c.name }}</div><div class="dates">{{ c.dates }}</div></div>
       {% if c.note %}<div class="company-note">{{ c.note }}</div>{% endif %}
       {% for r in c.roles %}
       <div class="role">
-        {# header + first bullet stay together; the rest may flow to the next page #}
+        {# role header + first bullet stay together; the rest may flow to the next page #}
         <div class="role-start">
-          <div class="role-head">
-            <div class="role-top">
-              <div class="role-title">{{ r.title }}</div>
-              {% if r.dates and c.roles|length > 1 %}<div class="dates">{{ r.dates }}</div>{% endif %}
-            </div>
-            {% if r.context %}<div class="context">{{ r.context }}</div>{% endif %}
-          </div>
+          <div class="row"><div class="role-title">{{ r.title }}</div>{% if r.dates and c.roles|length > 1 %}<div class="dates">{{ r.dates }}</div>{% endif %}</div>
+          {% if r.context %}<div class="context">{{ r.context }}</div>{% endif %}
           {% if r.bullets %}<ul class="bullets"><li>{{ r.bullets[0] }}</li></ul>{% endif %}
         </div>
         {% if r.bullets|length > 1 %}<ul class="bullets">
@@ -119,13 +92,11 @@ hr{border:none;border-top:1px solid var(--rule);margin:11px 0}
     {% endfor %}
   </div>
 
-  {% if ai_option == 2 %}
-  <hr>
+  {% if ai_option == 2 and ai_items %}
   <div class="section">
-    {# heading stays with its first item; the rest may flow to the next page #}
     <div class="role-start">
       <div class="section-label">{{ ai_title }}</div>
-      {% if ai_items %}<ul class="bullets"><li>{{ ai_items[0] }}</li></ul>{% endif %}
+      <ul class="bullets"><li>{{ ai_items[0] }}</li></ul>
     </div>
     {% if ai_items|length > 1 %}<ul class="bullets">
       {% for b in ai_items[1:] %}<li>{{ b }}</li>
@@ -134,38 +105,33 @@ hr{border:none;border-top:1px solid var(--rule);margin:11px 0}
   </div>
   {% endif %}
 
-  <hr>
-
   <div class="section keep">
     <div class="section-label">{{ labels.EDU }}</div>
     {% for g in edu_groups %}
-    <div class="edu-group">
       {% if g.label %}<div class="edu-sub">{{ g.label }}</div>{% endif %}
       {% for e in g.entries %}
       <div class="edu-row">
         <div><span class="edu-degree">{{ e.degree }}</span> <span class="edu-meta">· {{ e.school }}{% if e.extra %} · {{ e.extra }}{% endif %}</span></div>
-        <div class="edu-year">{{ e.year }}</div>
+        <div class="dates">{{ e.year }}</div>
       </div>
       {% endfor %}
-    </div>
     {% endfor %}
     {% if ai_option == 1 and edu_note %}<div class="edu-note">{{ edu_note }}</div>{% endif %}
   </div>
 
-  <hr>
-
+  {% if languages %}
   <div class="section keep">
     <div class="section-label">{{ labels.LNG }}</div>
-    <div class="lang-row">
-      {% for l in languages %}<div><span class="lang-name">{{ l.name }}</span> <span class="lang-level">{{ l.level }}</span></div>
-      {% endfor %}
-    </div>
+    <div class="inline">{% for l in languages %}{% if not loop.first %}<span class="sep">·</span>{% endif %}<b>{{ l.name }}</b> {{ l.level }}{% endfor %}</div>
   </div>
+  {% endif %}
 
-  <div class="section keep" style="margin-bottom:0">
+  {% if tech %}
+  <div class="section keep">
     <div class="section-label">{{ labels.TEC }}</div>
-    <div class="linear">{{ tech|join(' · ') }}</div>
+    <div class="inline">{{ tech|join(' · ') }}</div>
   </div>
+  {% endif %}
 
 </div>
 </body>

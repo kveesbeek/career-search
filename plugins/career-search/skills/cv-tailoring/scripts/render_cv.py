@@ -69,19 +69,19 @@ DEFAULT_BANNED = [r"\bHonestly\b", r"\bFrankly\b", r"That said", r"That being sa
                   r"ever-evolving", r"\bnon-negotiable\b", r"\bsynerg", r"\brobust\b", r"\bseamless"]
 PROFILE = {}
 
-# CV design. The defaults reproduce the plugin's standard look (Inter, green
-# accent). profile.yaml `cv.design` overrides any key; `import_design_tokens.py`
+# CV design. The defaults give the plugin's standard look: a classic, text-first
+# single column in Source Sans 3 with a dark slate-blue accent. profile.yaml `cv.design` overrides any key; `import_design_tokens.py`
 # fills it from a design-system tokens.json. Every value stays inside what an
 # ATS can read: one column, real text, embedded fonts, no text in images.
 DEFAULT_DESIGN = {
-    "font_family": "Inter", "font_fallback": "sans-serif", "font_files": [],
-    "ink": "#0F172A", "body": "#334155", "muted": "#64748B", "rule": "#E2E8F0",
-    "accent": "#2E5A4C", "accent_wash": "#EDF3F0", "accent_wash_rule": "#C6D8D0",
-    "name_weight": 700, "name_tracking": "-.8px",
-    "label_case": "uppercase", "label_color": "var(--ink)", "label_weight": 700,
-    "label_size": ".87", "label_tracking": ".03em", "sub_tracking": ".02em",
+    "font_family": "Source Sans 3", "font_fallback": "Arial, sans-serif", "font_files": [],
+    "ink": "#1B1F24", "body": "#2E333A", "muted": "#5F6670", "rule": "#1B1F24",
+    "accent": "#1F3B57", "accent_wash": "#EEF2F6", "accent_wash_rule": "#C9D3DE",
+    "name_weight": 700, "name_tracking": "0",
+    "label_case": "uppercase", "label_color": "var(--accent)", "label_weight": 700,
+    "label_size": ".95", "label_tracking": ".03em", "sub_tracking": ".02em",
     "label_rule": False, "label_rule_width": "14px",
-    "tag_radius": "999px",
+    "tag_radius": "0",
 }
 T = TEXT["en"]
 
@@ -112,9 +112,9 @@ def font_css(design: dict, sources: Path) -> str:
         if not path.is_absolute():
             path = sources.parent / SYSTEM_DIR / path
         data = base64.b64encode(path.read_bytes()).decode()
-        rules.append("@font-face{font-family:'%s';font-style:normal;font-weight:%s;font-display:swap;"
+        rules.append("@font-face{font-family:'%s';font-style:%s;font-weight:%s;font-display:swap;"
                      "src:url(data:font/woff2;base64,%s) format('woff2')}"
-                     % (design["font_family"], f.get("weight", 400), data))
+                     % (design["font_family"], f.get("style", "normal"), f.get("weight", 400), data))
     return "".join(rules)
 
 

@@ -60,7 +60,9 @@ The renderer ships with this skill: `scripts/render_cv.py`, with a default `cv_t
 
 ## Design: aligning the CV with a house style
 
-The CV's look comes from `cv.design` in `profile.yaml`: font family and embedded font files, ink/body/muted/rule colours, accent and its wash, the name's weight and tracking, section-label style (case, colour, weight, size, a short accent rule) and tag radius. Missing keys keep the plugin default (Inter, dark green accent). An own `cv_template.html` in `01 System/` is only for structural changes; while it exists it replaces the default template, and the design keys no longer apply.
+The default design is a classic, text-first single column: centred header, section labels with a hairline, inline skills, Source Sans 3 with a dark slate-blue accent. The look comes from `cv.design` in `profile.yaml`: font family and embedded font files, ink/body/muted/rule colours, accent and its wash, the name's weight and tracking, section-label style (case, colour, weight, size) and tag radius. Missing keys keep the default.
+
+A candidate who wants a layout of their own puts a `cv_template.html` in `01 System/`. It replaces the default template for that candidate only; the `cv.design` keys still apply to the extent the template uses them (`d.ink`, `d.accent`, `d.font_stack` ...). Start from the default template in `scripts/`, keep its variables and its ATS rules, and change the layout. Never edit the plugin's default for one candidate.
 
 When the candidate has a design system or style sheet:
 1. Get its tokens file (for a Design System artifact: `project/tokens.json`) and run `scripts/import_design_tokens.py <tokens.json> [--fonts-dir <dir>]`. It prints a `design:` block and notes on what it could not map.

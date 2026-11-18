@@ -17,7 +17,7 @@ Updates arrive through the marketplace: your own files (narrative, CV base, rule
 
 ## What you get
 
-**A tailored, ATS-safe CV per vacancy.** You approve a short change list against your own CV base; Claude renders a clean two-page PDF and checks it (page count, section titles, contact details, banned phrases, keyword coverage). Sample with a fictional candidate:
+**A tailored, ATS-safe CV per vacancy.** You approve a short change list against your own CV base; Claude renders a clean two-page PDF and checks it (page count, section titles, contact details, banned phrases, keyword coverage). Sample in the default design, with a fictional candidate. Your own house style or layout can replace it:
 
 <img src="docs/images/sample-cv.png" alt="Sample CV rendered by the plugin" width="560">
 

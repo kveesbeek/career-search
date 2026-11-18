@@ -44,25 +44,22 @@ cv:
   # Regex patterns that may never appear in a CV (case-insensitive). Leave
   # empty to use the plugin's default list of overused CV phrases.
   banned_patterns: []
-  # Look of the CV. Leave out to keep the plugin default (Inter, dark green).
+  # Look of the CV. Leave out to keep the plugin default (classic single column,
+  # Source Sans 3, dark slate-blue accent).
   # Fill it from a design system with cv-tailoring/scripts/import_design_tokens.py.
   # design:
-  #   font_family: Inter
-  #   font_fallback: sans-serif
+  #   font_family: Source Sans 3
+  #   font_fallback: Arial, sans-serif
   #   font_files: []            # - {file: fonts/MyFont-400.woff2, weight: 400} (relative to "01 System")
-  #   ink: '#0F172A'
-  #   body: '#334155'
-  #   muted: '#64748B'
-  #   rule: '#E2E8F0'
-  #   accent: '#2E5A4C'
-  #   accent_wash: '#EDF3F0'
-  #   accent_wash_rule: '#C6D8D0'
+  #   ink: '#1B1F24'
+  #   body: '#2E333A'
+  #   muted: '#5F6670'
+  #   rule: '#1B1F24'
+  #   accent: '#1F3B57'
   #   name_weight: 700
-  #   name_tracking: -.8px
+  #   name_tracking: '0'
   #   label_case: uppercase     # or none (sentence case)
-  #   label_color: var(--ink)   # or var(--accent)
+  #   label_color: var(--accent)
   #   label_weight: 700
-  #   label_size: '.87'
+  #   label_size: '.95'
   #   label_tracking: .03em
-  #   label_rule: false         # short accent bar before each section label
-  #   tag_radius: 999px

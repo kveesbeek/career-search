@@ -1,8 +1,8 @@
 # Third-party notices
 
-## Inter
+## Source Sans 3
 
-`plugins/career-search/skills/cv-tailoring/scripts/cv_fonts.css` embeds the Inter typeface (weights 400–700) by Rasmus Andersson, licensed under the SIL Open Font License 1.1 (https://openfontlicense.org). The font remains under that licence; the PolyForm Noncommercial License of this repository does not apply to it. Source: https://github.com/rsms/inter
+`plugins/career-search/skills/cv-tailoring/scripts/cv_fonts.css` embeds Source Sans 3 (weights 400, 600 and 700, upright and italic) by Paul D. Hunt for Adobe, licensed under the SIL Open Font License 1.1 (https://openfontlicense.org). The font remains under that licence; the PolyForm Noncommercial License of this repository does not apply to it. Source: https://github.com/adobe-fonts/source-sans
 
 ## Hanken Grotesk
 
