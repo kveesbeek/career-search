@@ -8,7 +8,7 @@
       "name": "career-search",
       "source": "./plugins/career-search",
       "description": "A job search system for senior candidates: set up your career sources from your CV, screen LinkedIn alerts, analyse vacancies, research companies, tailor an ATS-safe CV per vacancy and keep a scored pipeline with a setup dashboard.",
-      "version": "0.4.0"
+      "version": "0.4.1"
     }
   ]
 }

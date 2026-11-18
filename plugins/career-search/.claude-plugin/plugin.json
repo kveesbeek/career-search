@@ -1,6 +1,6 @@
 {
   "name": "career-search",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A job search system for senior candidates: set up your career sources once, screen LinkedIn alerts, analyse vacancies, research companies, tailor an ATS-safe CV per vacancy and keep a scored pipeline up to date.",
   "author": {
     "name": "Ken Van Eesbeek"
@@ -11,5 +11,7 @@
     "career",
     "linkedin",
     "pipeline"
-  ]
+  ],
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "repository": "https://github.com/kveesbeek/career-search"
 }

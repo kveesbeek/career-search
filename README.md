@@ -76,3 +76,7 @@ Upload your CV and say "set up my career search". The quick start takes about a 
 Everything after that is deepening, one step at a time: CV variants, what you may and may not claim, search criteria, scoring, daily screening, your house style. The **Opzet** tab of your pipeline page shows the full list with what is done, what is open and the sentence to give Claude for each step.
 
 The same tab holds **questions about your story**: whenever Claude sees a gap (a result without a number, a team size, a reason for a move), it adds a question there. Answer when it suits you, also from your phone; at your next task Claude puts the answers into your narrative. That is how the narrative grows without long interviews.
+
+## License
+
+[PolyForm Noncommercial 1.0.0](LICENSE.md): free to use, change and share for personal and other noncommercial purposes. Commercial use, such as offering it as part of a paid outplacement, recruitment or coaching service, needs the author's permission. Bundled fonts keep their own licence: see [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
